@@ -8,16 +8,18 @@ from django.http import JsonResponse
 def login(request):
 
     if request.method == 'POST':
-        response = {"user":None,"msg":None}
+        response = {"user":None,"msg":None} # 响应字典
         user = request.POST.get("user")
         pwd = request.POST.get("pwd")
         valid_code = request.POST.get("valid_code")
 
-        if valid_code.upper() == request.session.get("valid_code_str") :
+        # 验证验证码
+        valid_code_str = request.session.get("valid_code_str")
+        if valid_code.upper() == valid_code_str.upper() :
             pass
         else:
-            response["msg"] = "valid code error!"
-        return JsonResponse(response)
+            response["msg"] = "valid code error!" # 响应信息
+        return JsonResponse(response) # 返回响应字典
 
     return render(request,'login.html')
 
@@ -39,7 +41,7 @@ def get_validCode_img(request):
     kumo_font = ImageFont.truetype("static/font/kumo.ttf",size=32)
 
     '''
-    保存字符串
+    保存验证码字符串
     '''
 
     valid_code_str = ""
@@ -57,6 +59,8 @@ def get_validCode_img(request):
         draw.text((i*50+20,2),random_char,get_random_color(),font=kumo_font)
         # 保存验证码字符串
         valid_code_str += random_char
+    
+    print(valid_code_str)
 
 
     '''
@@ -91,7 +95,7 @@ def get_validCode_img(request):
     方法二：保存到内存中,读写更快
     """""
 
-    #把验证码存到
+    #把验证码字符串存到session中
     request.session["valid_code_str"] = valid_code_str
 
     f = BytesIO()     #内存管理工具

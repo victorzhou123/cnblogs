@@ -49,12 +49,15 @@
     });
 
     //登录验证
-    $.ajax({
+
+    $(".login_btn").click(function(){
+        
+        $.ajax({
         url:"",
-        type:"post"
+        type:"post",
         data:{
             user:$("#user").val(),
-            pwd:$("pwd").val(),
+            pwd:$("#pwd").val(),
             valid_code:$("#valid_code").val(),
             csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
         },
@@ -62,11 +65,10 @@
             console.log(data)
         }
 
-
-
     }
 
     )
+    })
 
 </script>
 
