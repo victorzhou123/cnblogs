@@ -1,6 +1,8 @@
+from django.forms.forms import Form
 from django.shortcuts import render,HttpResponse
 from django.contrib import auth    # 超级用户模块
-
+from django import forms
+from django.forms import widgets
 
 
 # Create your views here.
@@ -33,6 +35,9 @@ def login(request):
 
 
 def get_validCode_img(request):
+    '''
+    获取验证码图片
+    '''
     from blog.utils.validCode import get_valid_code_img
 
     data = get_valid_code_img(request)
@@ -42,3 +47,20 @@ def get_validCode_img(request):
 def index(request):
 
     return render(request,'index.html')
+
+
+class UserForm(forms.Form):
+    user = forms.CharField(max_length = 32, label="用户名",
+                            widget = widgets.TextInput(attrs={'class':'form-control'}))
+    pwd = forms.CharField(max_length = 32, label="密码",
+                            widget = widgets.PasswordInput(attrs={'class':'form-control'}))
+    re_pwd = forms.CharField(max_length = 32, label="确认密码",
+                            widget = widgets.PasswordInput(attrs={'class':'form-control'}))
+    email = forms.EmailField(max_length = 32, label="邮箱",
+                            widget = widgets.EmailInput(attrs={'class':'form-control'}))
+
+def register(request):
+
+    form = UserForm()
+
+    return render(request, 'register.html', {"form":form})

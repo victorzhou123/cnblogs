@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
+    <title>register</title>
+</head>
+<body>
+    <h3>注册页面</h3>
+    <div class="container">
+        <div class="col-md-6 col-lg-offset-3">
+
+            <form>
+                {% csrf_token %}
+                {% for filed in form %}
+                
+                <div class="form-group">
+                    <label for="user">{{filed.label}}</label>
+                    {{filed}}
+                </div>
+
+                {% endfor %}
+
+                <input href="" type="button" value="确认注册" class="btn btn-default pull-right">
+
+            </form>
+        </div>
+    </div>
+</body>
+</html>
