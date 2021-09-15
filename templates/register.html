@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #avatar{
+            display: none;
+        }
+        #avatar_img{
+            margin-left: 20px;
+        }
+    </style>
     <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
     <title>register</title>
 </head>
@@ -17,16 +25,44 @@
                 {% for filed in form %}
                 
                 <div class="form-group">
-                    <label for="user">{{filed.label}}</label>
+                    <!-- auto_id是自动填写每一个id值 -->
+                    <label for="{{filed.auto_id}}">{{filed.label}}</label>
                     {{filed}}
                 </div>
 
                 {% endfor %}
+
+                <div class="form-group">
+                    <label for="avatar">
+                        头像
+                        <img id="avatar_img" width="60" height="60" src="/static/blog/img/default.jpg" alt="">
+                    </label>
+                    <input id="avatar" type="file">
+                </div>
 
                 <input href="" type="button" value="确认注册" class="btn btn-default pull-right">
 
             </form>
         </div>
     </div>
+
+    <script src="\static\js\jquery-3.2.1.min.js"></script>
+
+    <script>
+        // 捕捉id=avatar的元素的内容改变的动作
+        $("#avatar").change(function(){
+            // 获取用户选中的文件对象
+            var file_obj = $(this)[0].files[0];
+            // 获取文件对象的路径，文件路径保存到了reader.result中
+            var reader = new FileReader();
+            reader.readAsDataURL(file_obj);
+            // 修改id = avatar_img元素的src属性
+            // 等待reader读完再执行修改元素的函数
+            reader.onload = function(){
+                $("#avatar_img").attr("src", reader.result);
+            }
+        })
+    </script>
+
 </body>
 </html>
