@@ -88,11 +88,11 @@
                 data: formdata,
                 success:function(data){
                   if(data.user){
-                    // 注册成功
+                    // 注册成功时
                     console.log(data.user)
                   }
                   else{
-                    // 注册失败
+                    // 注册失败时
                     // 循环打印错误信息
                     $(".error").html("")
                     $(".error").parent().removeClass("has-error")
