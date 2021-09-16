@@ -11,6 +11,9 @@
         #avatar_img{
             margin-left: 20px;
         }
+        .error{
+            color: red;
+        }
     </style>
     <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
     <title>register</title>
@@ -28,6 +31,7 @@
                     <!-- auto_id是自动填写每一个id值 -->
                     <label for="{{filed.auto_id}}">{{filed.label}}</label>
                     {{filed}}
+                    <span class="error pull-right"></span>
                 </div>
 
                 {% endfor %}
@@ -40,7 +44,7 @@
                     <input id="avatar" type="file">
                 </div>
 
-                <input href="" type="button" value="确认注册" class="btn btn-default pull-right">
+                <input href="" type="button" value="确认注册" class="btn btn-default pull-right reg_btn">
 
             </form>
         </div>
@@ -61,6 +65,44 @@
             reader.onload = function(){
                 $("#avatar_img").attr("src", reader.result);
             }
+        })
+
+        // 基于Ajax提交数据
+        $(".reg_btn").click(function(){
+            var formdata = new FormData();
+            formdata.append("user", $("#id_user").val());
+            formdata.append("pwd", $("#id_pwd").val());
+            formdata.append("re_pwd", $("#id_re_pwd").val());
+            formdata.append("email", $("#id_email").val());
+            formdata.append("csrfmiddlewaretoken", '{{csrf_token}}');
+            formdata.append("avatar", $("#avatar")[0].files[0]);
+
+            $.ajax({
+                url: "",
+                type: "post",
+                // 发送FormData对象必须加上的两行命令
+                contentType: false,
+                // 序列化data的内容
+                processData: false,
+                // 构建form-code的对象
+                data: formdata,
+                success:function(data){
+                  if(data.user){
+                    // 注册成功
+                    console.log(data.user)
+                  }
+                  else{
+                    // 注册失败
+                    // 循环打印错误信息
+                    $(".error").html("")
+                    $(".error").parent().removeClass("has-error")
+                    $.each(data.msg,function(filed, error_list){
+                        $("#id_"+filed).next().html(error_list[0])
+                        $("#id_"+filed).parent().addClass("has-error")
+                    })
+                  }
+                }
+            })
         })
     </script>
 

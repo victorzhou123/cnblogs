@@ -60,6 +60,20 @@ class UserForm(forms.Form):
                             widget = widgets.EmailInput(attrs={'class':'form-control'}))
 
 def register(request):
+    if request.is_ajax():
+        print(request.POST)
+        form = UserForm(request.POST)
+        # 构造响应字典
+        response = {"user":None, "msg":None}
+        if form.is_valid():
+            response["user"] = form.cleaned_data.get("user")
+            pass
+        else:
+            print(form.cleaned_data)
+            print(form.errors)
+            response["msg"] = form.errors
+
+        return JsonResponse(response)
 
     form = UserForm()
 
