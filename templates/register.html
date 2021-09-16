@@ -89,16 +89,16 @@
                 success:function(data){
                   if(data.user){
                     // 注册成功时
-                    console.log(data.user)
+                    console.log(data.user);
                   }
                   else{
                     // 注册失败时
                     // 循环打印错误信息
-                    $(".error").html("")
-                    $(".error").parent().removeClass("has-error")
+                    $(".error").html("");
+                    $(".error").parent().removeClass("has-error");
                     $.each(data.msg,function(filed, error_list){
-                        $("#id_"+filed).next().html(error_list[0])
-                        $("#id_"+filed).parent().addClass("has-error")
+                        $("#id_"+filed).next().html(error_list[0]);
+                        $("#id_"+filed).parent().addClass("has-error");
                     })
                   }
                 }

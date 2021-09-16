@@ -67,7 +67,6 @@ def register(request):
         response = {"user":None, "msg":None}
         if form.is_valid():
             response["user"] = form.cleaned_data.get("user")
-            pass
         else:
             print(form.cleaned_data)
             print(form.errors)
