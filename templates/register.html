@@ -89,7 +89,7 @@
                 success:function(data){
                   if(data.user){
                     // 注册成功时
-                    console.log(data.user);
+                    location.href = '/login/'
                   }
                   else{
                     // 注册失败时
@@ -97,6 +97,9 @@
                     $(".error").html("");
                     $(".error").parent().removeClass("has-error");
                     $.each(data.msg,function(filed, error_list){
+                        if(filed == "__all__"){
+                            $("#id_re_pwd").next().html(error_list[0]).parent().addClass("has-error");
+                        }
                         $("#id_"+filed).next().html(error_list[0]);
                         $("#id_"+filed).parent().addClass("has-error");
                     })

@@ -42,13 +42,13 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',    #内置安全机制，保护用户与网站安全
+    'django.middleware.security.SecurityMiddleware',  # 内置安全机制，保护用户与网站安全
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',    #开启CSRF防护功能
-    'django.contrib.auth.middleware.AuthenticationMiddleware',  #开启内置的用户认证系统
-    'django.contrib.messages.middleware.MessageMiddleware', #开启内置的信息提示功能
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',   #防止恶意程序点击劫持
+    'django.middleware.csrf.CsrfViewMiddleware',  # 开启CSRF防护功能
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # 开启内置的用户认证系统
+    'django.contrib.messages.middleware.MessageMiddleware',  # 开启内置的信息提示功能
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',  # 防止恶意程序点击劫持
 ]
 
 ROOT_URLCONF = 'cnblog.urls'
@@ -56,7 +56,7 @@ ROOT_URLCONF = 'cnblog.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],                  #寻址路径
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # 寻址路径
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'cnblog',
         'USER': 'root',
-        'PASSWORD':'Password@1',
+        'PASSWORD': 'Password@1',
         'HOST': '127.0.0.1',
         'PORT': 3306
     }
@@ -105,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'blog.UserInfo'  #因为UserInfo类继承了AbstractUser类所以要加这句话
+AUTH_USER_MODEL = 'blog.UserInfo'  # 因为UserInfo类继承了AbstractUser类所以要加这句话
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -126,9 +126,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS=[
-    os.path.join(BASE_DIR,"static")             #给/static/起别名
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static")             # 给/static/起别名
 ]
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")    # 给/media/起别名
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
