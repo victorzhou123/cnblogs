@@ -1,57 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
-    <script src="\static\js\jquery.js"></script>
-    <script src="\static\js\bootstrap.min.js"></script>
-    <script src="\static\js\jquery-3.2.1.min.js"></script>
-    <title>Title</title>
-</head>
-<body>
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-          <!-- Brand and toggle get grouped for better mobile display -->
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">博客园</a>
-          </div>
-      
-          <!-- Collect the nav links, forms, and other content for toggling -->
-          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-              <li class="active"><a href="#">随笔 <span class="sr-only">(current)</span></a></li>
-              <li><a href="#">新闻</a></li>
-              <li><a href="#">博文</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li class="dropdown">
-                {% if request.user.username %}
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> {{request.user.username}} <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a href="#">我的主页</a></li>
-                  <li><a href="#">修改密码</a></li>
-                  <li><a href="#">修改头像</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a href="/logout/">注销</a></li>
-                </ul>
-                {% else %}
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 登录/注册 <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a href="/login/">登录</a></li>
-                  <li><a href="/register/">注册</a></li>
-                </ul>
-                {% endif %}
 
-              </li>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
+  <script src="\static\js\jquery.js"></script>
+  <script src="\static\js\bootstrap.min.js"></script>
+  <script src="\static\js\jquery-3.2.1.min.js"></script>
+  <title>Title</title>
+</head>
+
+<body>
+
+  <!-- 下面是导航栏 -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+          data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">博客园</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">随笔 <span class="sr-only">(current)</span></a></li>
+          <li><a href="#">新闻</a></li>
+          <li><a href="#">博文</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            {% if request.user.username %}
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+              aria-expanded="false"> {{request.user.username}} <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">我的主页</a></li>
+              <li><a href="#">修改密码</a></li>
+              <li><a href="#">修改头像</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="/logout/">注销</a></li>
             </ul>
-          </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
-      </nav>
+            {% else %}
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+              aria-expanded="false"> 登录/注册 <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/login/">登录</a></li>
+              <li><a href="/register/">注册</a></li>
+            </ul>
+            {% endif %}
+
+          </li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+  <!-- 下面是主页面 -->
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- 筛选区 -->
+      <div class="col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            Panel content
+          </div>
+          <div class="panel-footer">Panel footer</div>
+        </div>
+        <div class="panel panel-success">
+          <div class="panel-body">
+            Panel content
+          </div>
+          <div class="panel-footer">Panel footer</div>
+        </div>
+      </div>
+      <!-- 文章列表 -->
+      <div class="col-md-6">
+        {% for article in article_list %}
+        <div class="panel panel-default">
+          <!-- 标题 -->
+          <div class="panel-body article-list">
+            <a href="">{{article.title}}</a>
+          </div>
+          <!-- 头像+内容 -->
+          <div class="panel-footer article-desc">
+            <!-- 头像 -->
+            <span class="media-left">
+              <img width="56" height="56" src="media/{{article.user.avatar}}" alt="">
+            </span>
+            <!-- 内容 -->
+            <span class="media-right">
+              {{article.content}}
+            </span>
+          </div>
+          <!-- 文章信息 -->
+          <div style="margin-left: 10px;">
+            <span style="margin-right: 20px;">
+              <a href="{{article.user.username}}">{{article.user.username}}</a>
+            </span>
+            <span style="margin-right: 20px;">
+              发布于：{{article.create_time|date:"Y-m-d H:i"}}
+            </span>
+            <span style="margin-right: 20px;">
+              <span class="glyphicon glyphicon-comment"></span>
+              {{article.comment_count}}
+            </span>
+            <span style="margin-right: 20px;">
+              <span class="glyphicon glyphicon-thumbs-up"></span>
+              {{article.up_count}}
+            </span>
+            <span style="margin-right: 20px;">
+              <span class="glyphicon glyphicon-thumbs-down"></span>
+              {{article.down_count}}
+            </span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <!-- 广告区 -->
+      <div class="col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            Panel content
+          </div>
+          <div class="panel-footer">Panel footer</div>
+        </div>
+        <div class="panel panel-success">
+          <div class="panel-body">
+            Panel content
+          </div>
+          <div class="panel-footer">Panel footer</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </body>
+
 </html>

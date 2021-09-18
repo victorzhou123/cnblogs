@@ -31,6 +31,13 @@ urlpatterns = [
 
     # media配置
     re_path(r"media/(?P<path>.*)$", serve,
-            {"document_root": settings.MEDIA_ROOT})
+            {"document_root": settings.MEDIA_ROOT}),
+    
+    # 个人站点URL
+    re_path('^(?P<username>\w+)$', views.home_site),
+
+    # 个人站点内的页面跳转
+    # tag category archive跳转
+    re_path('^(?P<username>\w+)/(?P<condition>category|tag|archive)/(?P<param>.*)$', views.home_site)
 
 ]

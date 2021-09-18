@@ -1,10 +1,13 @@
 # python标准库
 
 # 第三方插件库
-from blog.models import UserInfo
+from django.db.models.aggregates import Count
+from blog.models import Category, UserInfo
 from django.shortcuts import redirect, render, HttpResponse
 from django.contrib import auth    # 超级用户模块
 from django.http import JsonResponse
+from blog import models
+from django.db.models.functions import TruncMonth # 使日期截断至月
 
 # 自建库
 from .Myforms import UserForm
@@ -50,8 +53,10 @@ def get_validCode_img(request):
 
 
 def index(request):
+    
+    article_list = models.Article.objects.all()
 
-    return render(request, 'index.html')
+    return render(request, 'index.html', {"article_list":article_list})
 
 def logout(request):
 
@@ -90,3 +95,48 @@ def register(request):
     form = UserForm()
 
     return render(request, 'register.html', {"form": form})
+
+def home_site(request, username, **kwargs):
+    '''
+    个人站点视图
+    '''
+    print("username", username)
+    if kwargs:
+        pass
+    else:
+        # 判断用户是否存在
+        user = UserInfo.objects.filter(username=username).first()
+        if not user:
+            return render(request, '404_notfound.html')
+        else:
+            # 获取当前站点信息
+            blog = user.blog
+            # 获取当前站点的所有文章
+            # 基于对象查询
+            article_list = user.article_set.all()
+            # 基于__查询，JOIN查询
+            # article_list = models.Article.objects.filter(user=user).all()
+
+            # 查询当前站点每一个分类的名称以及对应的文章数
+            category_list = models.Category.objects.filter(blog=blog).values("nid").annotate(
+                                        c=Count("nid")).values_list("title","c")
+
+            # 查询当前站点的每一个标签名称以及对应的文章数
+            tag_list = models.Tag.objects.filter(blog=blog).values("nid").annotate(
+                                    c=Count("nid")).values_list("title","c")
+
+
+            # 查询当前站点每一个年月的名称以及对应的文章数
+            # date_list = models.Article.objects.filter(user=user).extra(
+            #                                    select={"y_m_date":"date_format(create_time,'%%Y-%%m')"}).values(
+            #                                        "y_m_date").annotate(c=Count("nid")).values_list(
+            #                                         "y_m_date", "c")
+
+            date_list = models.Article.objects.filter(user=user).annotate(
+                                            y_m_date=TruncMonth("create_time")).values("y_m_date").annotate(c=Count("nid")).values_list("y_m_date", "c")
+
+
+
+            return render(request, "home_site.html", 
+                        {"article_list":article_list, "blog":blog, "category_list":category_list,
+                        "tag_list":tag_list, "date_list":date_list, })
