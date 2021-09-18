@@ -108,28 +108,26 @@ def home_site(request, username, **kwargs):
     if not user:
         return render(request, '404_notfound.html')
     else:
+
+        # 获取当前站点的所有文章
+        # 基于对象查询
+        article_list = user.article_set.all()
+        # 基于__查询，JOIN查询
+        # article_list = models.Article.objects.filter(user=user).all()
         # 判断是否是跳转
+
         if kwargs:
             condition = kwargs.get("condition")
             param = kwargs.get("param")
+
             if condition == "category":
-                article_list = models.Article.objects.filter(user=user).filter(
-                    category__title=param).all()
+                article_list = article_list.filter(category__title=param).all()
             elif condition == "tag":
-                article_list = models.Article.objects.filter(user=user).filter(
-                    tags__title=param).all()
+                article_list = article_list.filter(tags__title=param).all()
             elif condition == "archive":
                 year, month = param.split("-")
-                article_list = models.Article.objects.filter(user=user).filter(
+                article_list = article_list.filter(
                     create_time__year=year, create_time__month=month).all()
-
-        else:
-
-            # 获取当前站点的所有文章
-            # 基于对象查询
-            article_list = user.article_set.all()
-            # 基于__查询，JOIN查询
-            # article_list = models.Article.objects.filter(user=user).all()
 
         # 获取当前站点信息
         blog = user.blog
@@ -139,8 +137,8 @@ def home_site(request, username, **kwargs):
             c=Count("nid")).values_list("title", "c")
 
         # 查询当前站点的每一个标签名称以及对应的文章数
-        tag_list = models.Tag.objects.filter(blog=blog).values("nid").annotate(
-            c=Count("nid")).values_list("title", "c")
+        tag_list = models.Tag.objects.filter(blog=blog).values("article__nid").annotate(
+            c=Count("article__nid")).values_list("title", "c")
 
         # 查询当前站点每一个年月的名称以及对应的文章数
         # date_list = models.Article.objects.filter(user=user).extra(
@@ -152,5 +150,6 @@ def home_site(request, username, **kwargs):
             y_m_date=TruncMonth("create_time")).values("y_m_date").annotate(c=Count("nid")).values_list("y_m_date", "c")
 
         return render(request, "home_site.html",
-                      {"article_list": article_list, "blog": blog, "category_list": category_list,
+                      {"username": username, "article_list": article_list, "blog": blog,
+                       "category_list": category_list,
                        "tag_list": tag_list, "date_list": date_list, })
