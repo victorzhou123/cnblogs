@@ -38,6 +38,10 @@ urlpatterns = [
 
     # 个人站点内的页面跳转
     # tag category archive跳转
-    re_path('^(?P<username>\w+)/(?P<condition>category|tag|archive)/(?P<param>.*)$', views.home_site)
+    re_path('^(?P<username>\w+)/(?P<condition>category|tag|archive)/(?P<param>.*)$', views.home_site),
+
+    # 文章详情页
+    re_path('^(?P<username>\w+)/articles/(?P<article_number>\d+)$', views.article_detail),
+
 
 ]

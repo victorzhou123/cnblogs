@@ -44,6 +44,7 @@
                 <span>
                     {{blog.title}}
                 </span>
+                <a href="/" class="backend">返回首页</a>
                 <a href="" class="backend">管理</a>
 
             </p>
@@ -60,7 +61,17 @@
                     <div class="panel-body">
                         个人信息
                     </div>
-                    <div class="panel-footer">这是个人信息内容</div>
+                    <div class="panel-footer">
+                        <!-- 头像 -->
+                        <div class="media-left">
+                            <img width="90" height="90" src="media/{{user.avatar}}" alt="" style="margin-left: 68px;">
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <span style="margin-right: 35px;">文章总数：{{article_count}}</span>
+                            <span>注册日期：{{user.create_time|date:"Y-m"}}</span>
+                        </div>
+
+                    </div>
                 </div>
                 <!-- 分类 -->
                 <div class="panel panel-default category">
@@ -70,7 +81,7 @@
                     <div class="panel-footer">
                         {% for category in category_list %}
                         <div>
-                            <a href="/{{username}}/category/{{category.0}}">{{category.0}} ({{category.1}})</a>
+                            <a href="/{{user.username}}/category/{{category.0}}">{{category.0}} ({{category.1}})</a>
                         </div>
                         {% endfor %}
                     </div>
@@ -83,7 +94,7 @@
                     <div class="panel-footer">
                         {% for tag in tag_list %}
                         <div>
-                            <a href="/{{username}}/tag/{{tag.0}}">{{tag.0}} ({{tag.1}})</a>
+                            <a href="/{{user.username}}/tag/{{tag.0}}">{{tag.0}} ({{tag.1}})</a>
                         </div>
                         {% endfor %}
                     </div>
@@ -96,7 +107,7 @@
                     <div class="panel-footer">
                         {% for date in date_list %}
                         <div>
-                            <a href="/{{username}}/archive/{{date.0|date:'Y-m'}}">{{date.0|date:"Y-m"}} ({{date.1}})</a>
+                            <a href="/{{user.username}}/archive/{{date.0|date:'Y-m'}}">{{date.0|date:"Y-m"}} ({{date.1}})</a>
                         </div>
                         {% endfor %}
                     </div>
@@ -108,7 +119,7 @@
                 <div class="panel panel-primary">
                     <!-- 标题 -->
                     <div class="panel-body article-list">
-                        <a href="">{{article.title}}</a>
+                        <a href="/{{article.user}}/articles/{{article.nid}}">{{article.title}}</a>
                     </div>
                     <!-- 内容 -->
                     <div class="panel-footer article-desc">
@@ -144,5 +155,12 @@
     </div>
 
 </body>
+
+<script>
+    $(function() {
+        var date = new Date()
+        var year = date.getFullYear();
+    })
+</script>
 
 </html>

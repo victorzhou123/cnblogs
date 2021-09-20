@@ -112,6 +112,8 @@ def home_site(request, username, **kwargs):
         # 获取当前站点的所有文章
         # 基于对象查询
         article_list = user.article_set.all()
+        article_count_dic = models.Article.objects.filter(user=user).aggregate(c=Count("nid"))
+        article_count = article_count_dic.get("c")
         # 基于__查询，JOIN查询
         # article_list = models.Article.objects.filter(user=user).all()
         # 判断是否是跳转
@@ -150,6 +152,18 @@ def home_site(request, username, **kwargs):
             y_m_date=TruncMonth("create_time")).values("y_m_date").annotate(c=Count("nid")).values_list("y_m_date", "c")
 
         return render(request, "home_site.html",
-                      {"username": username, "article_list": article_list, "blog": blog,
-                       "category_list": category_list,
+                      {"user": user, "article_list": article_list, "blog": blog,
+                       "category_list": category_list, "article_count":article_count,
                        "tag_list": tag_list, "date_list": date_list, })
+
+def article_detail(request, username, article_number):
+    '''
+    文章详情页
+    '''
+    user = UserInfo.objects.filter(username=username).first()
+    article = models.Article.objects.filter(user=user, nid=article_number).first()
+    if not (user and article):
+        return render(request, '404_notfound.html')
+    else:
+        print(article)
+        return render(request, 'article_detail.html', {"user":user, "article":article})
