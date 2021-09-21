@@ -98,22 +98,53 @@ def register(request):
     return render(request, 'register.html', {"form": form})
 
 
+def get_query_data(username):
+    '''
+    数据查询函数，不是视图！！
+    '''
+
+    user = UserInfo.objects.filter(username=username).first()
+    blog = user.blog
+    article_count_dic = models.Article.objects.filter(
+        user=user).aggregate(c=Count("nid"))
+    article_count = article_count_dic.get("c")
+    # 查询当前站点每一个分类的名称以及对应的文章数
+    category_list = models.Category.objects.filter(blog=blog).values("nid").annotate(
+        c=Count("nid")).values_list("title", "c")
+
+    # 查询当前站点的每一个标签名称以及对应的文章数
+    tag_list = models.Tag.objects.filter(blog=blog).values("article__nid").annotate(
+        c=Count("article__nid")).values_list("title", "c")
+
+    # 查询当前站点每一个年月的名称以及对应的文章数
+    # date_list = models.Article.objects.filter(user=user).extra(
+    #                                    select={"y_m_date":"date_format(create_time,'%%Y-%%m')"}).values(
+    #                                        "y_m_date").annotate(c=Count("nid")).values_list(
+    #                                         "y_m_date", "c")
+
+    date_list = models.Article.objects.filter(user=user).annotate(
+        y_m_date=TruncMonth("create_time")).values("y_m_date").annotate(c=Count("nid")).values_list("y_m_date", "c")
+
+    return {"user": user, "blog": blog, "category_list": category_list, "article_count": article_count,
+            "tag_list": tag_list, "date_list": date_list}
+
+
 def home_site(request, username, **kwargs):
     '''
     个人站点视图
     '''
-    print("username", username)
     # 判断用户是否存在
     user = UserInfo.objects.filter(username=username).first()
     if not user:
         return render(request, '404_notfound.html')
     else:
 
+        # 数据查询集合
+        context = get_query_data(username)
+
         # 获取当前站点的所有文章
         # 基于对象查询
         article_list = user.article_set.all()
-        article_count_dic = models.Article.objects.filter(user=user).aggregate(c=Count("nid"))
-        article_count = article_count_dic.get("c")
         # 基于__查询，JOIN查询
         # article_list = models.Article.objects.filter(user=user).all()
         # 判断是否是跳转
@@ -131,39 +162,22 @@ def home_site(request, username, **kwargs):
                 article_list = article_list.filter(
                     create_time__year=year, create_time__month=month).all()
 
-        # 获取当前站点信息
-        blog = user.blog
+        # 添加article_list到字典中去
+        context["article_list"] = article_list
 
-        # 查询当前站点每一个分类的名称以及对应的文章数
-        category_list = models.Category.objects.filter(blog=blog).values("nid").annotate(
-            c=Count("nid")).values_list("title", "c")
+        return render(request, "home_site.html", context)
 
-        # 查询当前站点的每一个标签名称以及对应的文章数
-        tag_list = models.Tag.objects.filter(blog=blog).values("article__nid").annotate(
-            c=Count("article__nid")).values_list("title", "c")
-
-        # 查询当前站点每一个年月的名称以及对应的文章数
-        # date_list = models.Article.objects.filter(user=user).extra(
-        #                                    select={"y_m_date":"date_format(create_time,'%%Y-%%m')"}).values(
-        #                                        "y_m_date").annotate(c=Count("nid")).values_list(
-        #                                         "y_m_date", "c")
-
-        date_list = models.Article.objects.filter(user=user).annotate(
-            y_m_date=TruncMonth("create_time")).values("y_m_date").annotate(c=Count("nid")).values_list("y_m_date", "c")
-
-        return render(request, "home_site.html",
-                      {"user": user, "article_list": article_list, "blog": blog,
-                       "category_list": category_list, "article_count":article_count,
-                       "tag_list": tag_list, "date_list": date_list, })
 
 def article_detail(request, username, article_number):
     '''
     文章详情页
     '''
     user = UserInfo.objects.filter(username=username).first()
-    article = models.Article.objects.filter(user=user, nid=article_number).first()
+    article = models.Article.objects.filter(
+        user=user, nid=article_number).first()
     if not (user and article):
         return render(request, '404_notfound.html')
     else:
-        print(article)
-        return render(request, 'article_detail.html', {"user":user, "article":article})
+        context = get_query_data(username)
+        context["article"] = article
+        return render(request, 'article_detail.html', context)

@@ -1,166 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
-    <script src="\static\js\jquery.js"></script>
-    <script src="\static\js\bootstrap.min.js"></script>
-    <script src="\static\js\jquery-3.2.1.min.js"></script>
-    <style>
-        .header {
-            width: 100%;
-            height: 60px;
-            background-color: #369;
-        }
+{% block content %}
 
-        .header .title {
-            font-size: 18px;
-            font-weight: 100;
-            line-height: 60px;
-            color: white;
-        }
-
-        .backend {
-            float: right;
-            color: white;
-            font-size: 14px;
-            margin-right: 10px;
-        }
-        .article_info {
-            color: grey;
-        }
-    </style>
-    <title>{{blog.title}}</title>
-</head>
-
-<body>
-    <!-- 以下是站头 -->
-    <div class="header">
-        <div class="content">
-            <p class="title">
-                <span>
-                    {{blog.title}}
-                </span>
-                <a href="/" class="backend">返回首页</a>
-                <a href="" class="backend">管理</a>
-
-            </p>
+    {% for article in article_list %}
+    <div class="panel panel-primary">
+        <!-- 标题 -->
+        <div class="panel-body article-list">
+            <a href="/{{article.user}}/articles/{{article.nid}}">{{article.title}}</a>
+        </div>
+        <!-- 内容 -->
+        <div class="panel-footer article-desc">
+            <span class="media-right">
+                {{article.content}}
+            </span>
+        </div>
+        <!-- 文章信息 -->
+        <div class="article_info" style="margin-left: 10px;">
+            <span style="margin-right: 20px;">
+                <a href="/{{article.user.username}}">{{article.user.username}}</a>
+            </span>
+            <span style="margin-right: 20px;">
+                发布于：{{article.create_time|date:"Y-m-d H:i"}}
+            </span>
+            <span style="margin-right: 20px;">
+                <span class="glyphicon glyphicon-comment"></span>
+                {{article.comment_count}}
+            </span>
+            <span style="margin-right: 20px;">
+                <span class="glyphicon glyphicon-thumbs-up"></span>
+                {{article.up_count}}
+            </span>
+            <span style="margin-right: 20px;">
+                <span class="glyphicon glyphicon-thumbs-down"></span>
+                {{article.down_count}}
+            </span>
         </div>
     </div>
-    <!-- 以下是个人站点内容 -->
-    <div class="container-fluid" style="margin-left: 30px; margin-top: 30px;">
-        <div class="row">
-            <!-- 左侧信息栏内容 -->
-            <!-- 个人信息+分类+标签+年月归档 -->
-            <div class="col-md-3" style="margin-right:30px;">
-                <!-- 个人信息 -->
-                <div class="panel panel-default personal-info">
-                    <div class="panel-body">
-                        个人信息
-                    </div>
-                    <div class="panel-footer">
-                        <!-- 头像 -->
-                        <div class="media-left">
-                            <img width="90" height="90" src="media/{{user.avatar}}" alt="" style="margin-left: 68px;">
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <span style="margin-right: 35px;">文章总数：{{article_count}}</span>
-                            <span>注册日期：{{user.create_time|date:"Y-m"}}</span>
-                        </div>
+    {% endfor %}
 
-                    </div>
-                </div>
-                <!-- 分类 -->
-                <div class="panel panel-default category">
-                    <div class="panel-body">
-                        分类
-                    </div>
-                    <div class="panel-footer">
-                        {% for category in category_list %}
-                        <div>
-                            <a href="/{{user.username}}/category/{{category.0}}">{{category.0}} ({{category.1}})</a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <!-- 标签 -->
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        标签
-                    </div>
-                    <div class="panel-footer">
-                        {% for tag in tag_list %}
-                        <div>
-                            <a href="/{{user.username}}/tag/{{tag.0}}">{{tag.0}} ({{tag.1}})</a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <!-- 年月归档 -->
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        年月归档
-                    </div>
-                    <div class="panel-footer">
-                        {% for date in date_list %}
-                        <div>
-                            <a href="/{{user.username}}/archive/{{date.0|date:'Y-m'}}">{{date.0|date:"Y-m"}} ({{date.1}})</a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            <!-- 文章列表 -->
-            <div class="col-md-6">
-                {% for article in article_list %}
-                <div class="panel panel-primary">
-                    <!-- 标题 -->
-                    <div class="panel-body article-list">
-                        <a href="/{{article.user}}/articles/{{article.nid}}">{{article.title}}</a>
-                    </div>
-                    <!-- 内容 -->
-                    <div class="panel-footer article-desc">
-                        <span class="media-right">
-                            {{article.content}}
-                        </span>
-                    </div>
-                    <!-- 文章信息 -->
-                    <div class="article_info" style="margin-left: 10px;">
-                        <span style="margin-right: 20px;">
-                            <a href="/{{article.user.username}}">{{article.user.username}}</a>
-                        </span>
-                        <span style="margin-right: 20px;">
-                            发布于：{{article.create_time|date:"Y-m-d H:i"}}
-                        </span>
-                        <span style="margin-right: 20px;">
-                            <span class="glyphicon glyphicon-comment"></span>
-                            {{article.comment_count}}
-                        </span>
-                        <span style="margin-right: 20px;">
-                            <span class="glyphicon glyphicon-thumbs-up"></span>
-                            {{article.up_count}}
-                        </span>
-                        <span style="margin-right: 20px;">
-                            <span class="glyphicon glyphicon-thumbs-down"></span>
-                            {{article.down_count}}
-                        </span>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-
-</body>
-
-<script>
-    $(function() {
-        var date = new Date()
-        var year = date.getFullYear();
-    })
-</script>
-
-</html>
+{% endblock %}
