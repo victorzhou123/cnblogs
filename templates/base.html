@@ -55,66 +55,14 @@
         <div class="row">
             <!-- 左侧信息栏内容 -->
             <!-- 个人信息+分类+标签+年月归档 -->
-            <div class="col-md-3" style="margin-right: 30px;">
-                <!-- 个人信息 -->
-                <div class="panel panel-default personal-info">
-                    <div class="panel-body">
-                        个人信息
-                    </div>
-                    <div class="panel-footer">
-                        <!-- 头像 -->
-                        <div class="media-left">
-                            <img width="90" height="90" src="media/{{user.avatar}}" alt="" style="margin-left: 68px;">
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <span style="margin-right: 35px;">文章总数：{{article_count}}</span>
-                            <span>注册日期：{{user.create_time|date:"Y-m"}}</span>
-                        </div>
+            <div class="col-md-2" style="margin-right: 30px;">
 
-                    </div>
-                </div>
-                <!-- 分类 -->
-                <div class="panel panel-default category">
-                    <div class="panel-body">
-                        分类
-                    </div>
-                    <div class="panel-footer">
-                        {% for category in category_list %}
-                        <div>
-                            <a href="/{{user.username}}/category/{{category.0}}">{{category.0}} ({{category.1}})</a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <!-- 标签 -->
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        标签
-                    </div>
-                    <div class="panel-footer">
-                        {% for tag in tag_list %}
-                        <div>
-                            <a href="/{{user.username}}/tag/{{tag.0}}">{{tag.0}} ({{tag.1}})</a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <!-- 年月归档 -->
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        年月归档
-                    </div>
-                    <div class="panel-footer">
-                        {% for date in date_list %}
-                        <div>
-                            <a href="/{{user.username}}/archive/{{date.0|date:'Y-m'}}">{{date.0|date:"Y-m"}} ({{date.1}})</a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
+                {% load my_tags %}
+                {% get_classification_style user %}
+
             </div>
             <!-- 文章列表 -->
-            <div class="col-md-8">
+            <div class="col-md-9">
                 {% block content %}
 
                 {% endblock %}

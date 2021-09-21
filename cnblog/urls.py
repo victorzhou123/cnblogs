@@ -28,6 +28,8 @@ urlpatterns = [
     path('register/', views.register),
     path('get_validCode_img/', views.get_validCode_img),
     path('logout/', views.logout),
+    path('digg/', views.digg),
+
 
     # media配置
     re_path(r"media/(?P<path>.*)$", serve,

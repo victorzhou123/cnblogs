@@ -1,13 +1,15 @@
 # python标准库
+import json
 
 # 第三方插件库
 from django.db.models.aggregates import Count
 from blog.models import Category, UserInfo
 from django.shortcuts import redirect, render, HttpResponse
 from django.contrib import auth    # 超级用户模块
-from django.http import JsonResponse
+from django.http import JsonResponse, response
 from blog import models
 from django.db.models.functions import TruncMonth  # 使日期截断至月
+from django.db.models import F
 
 # 自建库
 from .Myforms import UserForm
@@ -98,35 +100,18 @@ def register(request):
     return render(request, 'register.html', {"form": form})
 
 
-def get_query_data(username):
+def get_classication_data(username):
     '''
-    数据查询函数，不是视图！！
+    分类信息查询函数，不是视图！！
     '''
 
     user = UserInfo.objects.filter(username=username).first()
     blog = user.blog
-    article_count_dic = models.Article.objects.filter(
-        user=user).aggregate(c=Count("nid"))
+    article_count_dic = models.Article.objects.filter(user=user).aggregate(c=Count("nid"))
     article_count = article_count_dic.get("c")
-    # 查询当前站点每一个分类的名称以及对应的文章数
-    category_list = models.Category.objects.filter(blog=blog).values("nid").annotate(
-        c=Count("nid")).values_list("title", "c")
 
-    # 查询当前站点的每一个标签名称以及对应的文章数
-    tag_list = models.Tag.objects.filter(blog=blog).values("article__nid").annotate(
-        c=Count("article__nid")).values_list("title", "c")
 
-    # 查询当前站点每一个年月的名称以及对应的文章数
-    # date_list = models.Article.objects.filter(user=user).extra(
-    #                                    select={"y_m_date":"date_format(create_time,'%%Y-%%m')"}).values(
-    #                                        "y_m_date").annotate(c=Count("nid")).values_list(
-    #                                         "y_m_date", "c")
-
-    date_list = models.Article.objects.filter(user=user).annotate(
-        y_m_date=TruncMonth("create_time")).values("y_m_date").annotate(c=Count("nid")).values_list("y_m_date", "c")
-
-    return {"user": user, "blog": blog, "category_list": category_list, "article_count": article_count,
-            "tag_list": tag_list, "date_list": date_list}
+    return {"user": user, "blog": blog, "article_count": article_count}
 
 
 def home_site(request, username, **kwargs):
@@ -139,8 +124,8 @@ def home_site(request, username, **kwargs):
         return render(request, '404_notfound.html')
     else:
 
-        # 数据查询集合
-        context = get_query_data(username)
+        # 分类信息查询
+        context = get_classication_data(username)
 
         # 获取当前站点的所有文章
         # 基于对象查询
@@ -178,6 +163,32 @@ def article_detail(request, username, article_number):
     if not (user and article):
         return render(request, '404_notfound.html')
     else:
-        context = get_query_data(username)
+        context = get_classication_data(username)
         context["article"] = article
         return render(request, 'article_detail.html', context)
+
+def digg(request):
+    '''
+    点赞视图函数
+    '''
+    is_up = json.loads(request.POST.get("is_up")) # 将字符串的true&false反序列化成布尔值
+    article_number = request.POST.get("article_number")
+    user_id = request.user.nid                    # 获取当前登录人的id
+
+    response = {"state":True}  # 构建响应字典
+
+    updown_obj = models.ArticleUpDown.objects.filter(article_id = article_number, user_id=user_id).first()
+
+    if not updown_obj:
+
+        ard = models.ArticleUpDown.objects.create(user_id=user_id, article_id=article_number, is_up=is_up)
+        if is_up:
+            models.Article.objects.filter(nid=article_number).update(up_count=F("up_count")+1)
+        else:
+            models.Article.objects.filter(nid=article_number).update(down_count=F("down_count")+1)
+    else:
+
+        response["state"] = False
+        response["handled"] = updown_obj.is_up
+
+    return JsonResponse(response)

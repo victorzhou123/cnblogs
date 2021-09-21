@@ -2,12 +2,81 @@
 
 {% block content %}
 
+    <link rel="stylesheet" href="/static/css/article_detail.css">
+
+    {% csrf_token %}
+
+    <!-- 文章标题 -->
     <div>
-        <h2>{{article.title}}</h2>
+        <h3 class="text-center">{{article.title}}</h3>
     </div>
     <hr>
-    <div style="margin: 40px 30px;">
-        <h3>{{article.content}}</h3>
+    <!-- 文章内容 -->
+    <div class="content" style="margin: 40px 30px;">
+        {{article.content|safe}}
     </div>
+    <hr>
+    <!-- 点赞 -->
+    <div class="clearfix">
+        <div id="div_digg">
+            <div class="diggit action">
+                <span class="diggnum" id="digg_count">{{article.up_count}}</span>
+            </div>
+            <div class="buryit action">
+                <span class="burynum" id="bury_count">{{article.down_count}}</span>
+            </div>
+            <div class="clear"></div>
+            <div class="diggword" id="digg_tips"></div>
+        </div>
+    </div>
+
+    <!-- 评论区 -->
+    <div class="comments">
+        <div style="margin-bottom: 10px;">
+            <span id="commentform_title">发表评论</span>
+            <span class="pull-right">
+                当前登录用户：<img id="user_now" src="/media/{{request.user.avatar}}">{{request.user.username}}
+            </span>
+        </div>
+
+        <textarea name="" id="" cols="30" rows="10"></textarea>
+
+    </div>
+
+    <script>
+        $(".action").click(function(){
+            var is_up = $(this).hasClass("diggit");
+
+            $obj = $(this).children("span")
+
+            $.ajax({
+                url:"/digg/",
+                type:"post",
+                data:{
+                    "csrfmiddlewaretoken":$("[name='csrfmiddlewaretoken']").val(),
+                    "is_up":is_up,
+                    "article_number":"{{article.nid}}",
+                },
+                success:function(data){
+                    if (!data.state){
+
+                        var val = data.handled ? "您已经推荐过了": "您已经反对了";
+                        $("#digg_tips").html(val);
+
+                    }else{
+
+                        var val = parseInt($obj.text());
+                        $obj.text(val + 1);
+
+                    }
+                },
+            })
+
+            setTimeout(function(){
+                $("#digg_tips").html("");
+            },2000)
+
+        })
+    </script>
 
 {% endblock %}

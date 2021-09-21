@@ -85,18 +85,18 @@
         {% for article in article_list %}
         <div class="panel panel-default">
           <!-- 标题 -->
-          <div class="panel-body article-list">
+          <div class="panel-heading article-list">
             <a href="/{{article.user}}/articles/{{article.nid}}">{{article.title}}</a>
           </div>
-          <!-- 头像+内容 -->
-          <div class="panel-footer article-desc">
+          <!-- 头像 + 内容 -->
+          <div class="panel-body article-desc">
             <!-- 头像 -->
             <span class="media-left">
               <img width="56" height="56" src="media/{{article.user.avatar}}" alt="">
             </span>
             <!-- 内容 -->
             <span class="media-right">
-              {{article.content}}
+              {{article.content|safe}}
             </span>
           </div>
           <!-- 文章信息 -->

@@ -5,13 +5,13 @@
     {% for article in article_list %}
     <div class="panel panel-primary">
         <!-- 标题 -->
-        <div class="panel-body article-list">
-            <a href="/{{article.user}}/articles/{{article.nid}}">{{article.title}}</a>
+        <div class="panel-heading article-list">
+            <a href="/{{article.user}}/articles/{{article.nid}}" style="color: honeydew;">{{article.title}}</a>
         </div>
         <!-- 内容 -->
-        <div class="panel-footer article-desc">
-            <span class="media-right">
-                {{article.content}}
+        <div class="panel-body article-desc">
+            <span class="simple_content">
+                {{article.content|safe}}
             </span>
         </div>
         <!-- 文章信息 -->
