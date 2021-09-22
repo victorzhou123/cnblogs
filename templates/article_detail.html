@@ -2,81 +2,158 @@
 
 {% block content %}
 
-    <link rel="stylesheet" href="/static/css/article_detail.css">
+<link rel="stylesheet" href="/static/css/article_detail.css">
 
-    {% csrf_token %}
+{% csrf_token %}
 
-    <!-- 文章标题 -->
-    <div>
-        <h3 class="text-center">{{article.title}}</h3>
-    </div>
-    <hr>
-    <!-- 文章内容 -->
-    <div class="content" style="margin: 40px 30px;">
-        {{article.content|safe}}
-    </div>
-    <hr>
-    <!-- 点赞 -->
-    <div class="clearfix">
-        <div id="div_digg">
-            <div class="diggit action">
-                <span class="diggnum" id="digg_count">{{article.up_count}}</span>
-            </div>
-            <div class="buryit action">
-                <span class="burynum" id="bury_count">{{article.down_count}}</span>
-            </div>
-            <div class="clear"></div>
-            <div class="diggword" id="digg_tips"></div>
+<!-- 文章标题 -->
+<div>
+    <h3 class="text-center">{{article.title}}</h3>
+</div>
+<hr>
+<!-- 文章内容 -->
+<div class="content" style="margin: 40px 30px;">
+    {{article.content|safe}}
+</div>
+<hr>
+
+<!-- 点赞 -->
+<div class="clearfix">
+    <div id="div_digg">
+        <div class="diggit action">
+            <span class="diggnum" id="digg_count">{{article.up_count}}</span>
         </div>
-    </div>
-
-    <!-- 评论区 -->
-    <div class="comments">
-        <div style="margin-bottom: 10px;">
-            <span id="commentform_title">发表评论</span>
-            <span class="pull-right">
-                当前登录用户：<img id="user_now" src="/media/{{request.user.avatar}}">{{request.user.username}}
-            </span>
+        <div class="buryit action">
+            <span class="burynum" id="bury_count">{{article.down_count}}</span>
         </div>
+        <div class="clear"></div>
+        <div class="diggword" id="digg_tips"></div>
+    </div>
+</div>
 
-        <textarea name="" id="" cols="30" rows="10"></textarea>
+<!-- 评论区 -->
+<div class="comments_area">
+    <div style="margin-bottom: 10px;">评论列表</div>
+    <ul class="list-group comment_list">
+        {% for comment in comments %}
+            <li class="list-group-item">
+                <div>
+                    <a href=""># {{forloop.counter}}楼</a> &nbsp;&nbsp;
+                    {{comment.create_time|date:"Y-m-d H:i"}} &nbsp;&nbsp;
+                    <a href="/{{comment.user}}">{{comment.user}}</a>
+                    <a href="" class="pull-right">回复</a>
+                </div>
+                <div style="margin: 17px 0 17px 5px;">{{comment.content}}</div>
+            </li>
+        {% endfor%}
+    </ul>
+</div>
 
+<!-- 发表评论 -->
+<div class="comments">
+    <div style="margin-bottom: 10px;">
+        <span id="commentform_title">发表评论</span>
+        <span class="pull-right">
+            当前登录用户：<img id="user_now" src="/media/{{request.user.avatar}}">{{request.user.username}}
+        </span>
     </div>
 
-    <script>
-        $(".action").click(function(){
-            var is_up = $(this).hasClass("diggit");
+    <textarea name="" id="" cols="30" rows="10" class="comment_area"></textarea>
+    <input type="button" value="提交评论" class="pull-right comment_btn">
+    <span id="comment_msg" class="pull-right"></span>
 
-            $obj = $(this).children("span")
+</div>
 
+<script>
+    // 点赞请求
+    $(".action").click(function () {
+        var is_up = $(this).hasClass("diggit");
+
+        $obj = $(this).children("span")
+
+        $.ajax({
+            url: "/digg/",
+            type: "post",
+            data: {
+                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                "is_up": is_up,
+                "article_number": "{{article.nid}}",
+            },
+            success: function (data) {
+                if (!data.state) {
+
+                    var val = data.handled ? "您已经推荐过了" : "您已经反对了";
+                    $("#digg_tips").html(val);
+
+                } else {
+
+                    var val = parseInt($obj.text());
+                    $obj.text(val + 1);
+
+                }
+            },
+        })
+
+        setTimeout(function () {
+            $("#digg_tips").html("");
+        }, 2000)
+
+    })
+
+    // 评论上传
+    $(".comment_btn").click(function () {
+        var content = $(".comment_area").val();
+        if (content) {
             $.ajax({
-                url:"/digg/",
-                type:"post",
-                data:{
-                    "csrfmiddlewaretoken":$("[name='csrfmiddlewaretoken']").val(),
-                    "is_up":is_up,
-                    "article_number":"{{article.nid}}",
+
+                url: "/comment/",
+                type: "post",
+                data: {
+                    "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                    "article_number": "{{article.nid}}",
+                    "content": content,
                 },
-                success:function(data){
-                    if (!data.state){
+                success: function (data) {
 
-                        var val = data.handled ? "您已经推荐过了": "您已经反对了";
-                        $("#digg_tips").html(val);
+                    var create_time = data.create_time;
+                    var username = data.username;
+                    var content = data.content;
 
-                    }else{
+                    var comment_ajax = `
+                            <li class="list-group-item">
+                                <div>
+                                    <a href=""># 本楼</a> &nbsp;&nbsp;
+                                    ${create_time} &nbsp;&nbsp;
+                                    <a href="/${username}">${username}</a>
+                                </div>
+                                <div style="margin: 17px 0 17px 5px;">${content}</div>
+                            </li>`
+                    ;
+                    
+                    $("ul.comment_list").append(comment_ajax);
 
-                        var val = parseInt($obj.text());
-                        $obj.text(val + 1);
+                    $("#comment_msg").removeClass("comment_msg_fail");
+                    $("#comment_msg").addClass("comment_msg_pass");
+                    $("#comment_msg").html("提交评论成功");
 
-                    }
+
                 },
             })
+        } else {
 
-            setTimeout(function(){
-                $("#digg_tips").html("");
-            },2000)
+            $("#comment_msg").removeClass("comment_msg_pass");
+            $("#comment_msg").addClass("comment_msg_fail");
+            $("#comment_msg").html("请输入内容");
 
-        })
-    </script>
+        }
+
+        setTimeout(function () {
+            $("#comment_msg").html("");
+        }, 2000)
+
+    })
+
+
+</script>
 
 {% endblock %}

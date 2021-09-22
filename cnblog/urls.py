@@ -29,6 +29,7 @@ urlpatterns = [
     path('get_validCode_img/', views.get_validCode_img),
     path('logout/', views.logout),
     path('digg/', views.digg),
+    path('comment/', views.comment),
 
 
     # media配置

@@ -160,11 +160,14 @@ def article_detail(request, username, article_number):
     user = UserInfo.objects.filter(username=username).first()
     article = models.Article.objects.filter(
         user=user, nid=article_number).first()
+    comments = models.Comment.objects.filter(article=article).all()
+
     if not (user and article):
         return render(request, '404_notfound.html')
     else:
         context = get_classication_data(username)
         context["article"] = article
+        context["comments"] = comments
         return render(request, 'article_detail.html', context)
 
 def digg(request):
@@ -192,3 +195,21 @@ def digg(request):
         response["handled"] = updown_obj.is_up
 
     return JsonResponse(response)
+
+def comment(request):
+    '''
+    评论视图函数
+    '''
+    response = {}
+
+    if request.is_ajax():
+        user = request.user
+        content = request.POST.get("content")
+        article_number = request.POST.get("article_number")
+        comment_obj = models.Comment.objects.create(content=content, article_id=article_number, user=user)
+        response["create_time"] = comment_obj.create_time.strftime("%Y-%m-%d %X")
+        response["username"] = request.user.username
+        response["content"] = content
+
+        return JsonResponse(response)
+
