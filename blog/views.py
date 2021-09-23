@@ -206,10 +206,14 @@ def comment(request):
         user = request.user
         content = request.POST.get("content")
         article_number = request.POST.get("article_number")
-        comment_obj = models.Comment.objects.create(content=content, article_id=article_number, user=user)
+        parent_comment_id = request.POST.get("parent_comment_id")
+        comment_obj = models.Comment.objects.create(content=content, article_id=article_number, user=user, parent_comment_id=parent_comment_id)
+        parent_comment_obj = comment_obj.parent_comment
         response["create_time"] = comment_obj.create_time.strftime("%Y-%m-%d %X")
         response["username"] = request.user.username
         response["content"] = content
+        response["parent_comment_user"] = parent_comment_obj.user.username
+        response["parent_comment_content"] = parent_comment_obj.content
 
         return JsonResponse(response)
 

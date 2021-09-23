@@ -41,8 +41,14 @@
                     <a href=""># {{forloop.counter}}楼</a> &nbsp;&nbsp;
                     {{comment.create_time|date:"Y-m-d H:i"}} &nbsp;&nbsp;
                     <a href="/{{comment.user}}">{{comment.user}}</a>
-                    <a href="" class="pull-right">回复</a>
+                    <a class="pull-right reply_btn" username="{{comment.user}}" comment_id="{{comment.nid}}">回复</a>
                 </div>
+                    <!-- 显示父评论 -->
+                    {% if comment.parent_comment_id %}
+                    <div class="well">
+                        {{comment.parent_comment.user}}：{{comment.parent_comment.content}}
+                    </div>
+                    {% endif %}
                 <div style="margin: 17px 0 17px 5px;">{{comment.content}}</div>
             </li>
         {% endfor%}
@@ -57,8 +63,7 @@
             当前登录用户：<img id="user_now" src="/media/{{request.user.avatar}}">{{request.user.username}}
         </span>
     </div>
-
-    <textarea name="" id="" cols="30" rows="10" class="comment_area"></textarea>
+    <textarea parent_comment_id="" name="" id="comment_content" cols="30" rows="10" class="comment_area"></textarea>
     <input type="button" value="提交评论" class="pull-right comment_btn">
     <span id="comment_msg" class="pull-right"></span>
 
@@ -103,6 +108,7 @@
     // 评论上传
     $(".comment_btn").click(function () {
         var content = $(".comment_area").val();
+        var parent_comment_id = $(".comment_area").attr("parent_comment_id");
         if (content) {
             $.ajax({
 
@@ -112,14 +118,32 @@
                     "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
                     "article_number": "{{article.nid}}",
                     "content": content,
+                    "parent_comment_id": parent_comment_id,
                 },
                 success: function (data) {
 
                     var create_time = data.create_time;
                     var username = data.username;
                     var content = data.content;
-
-                    var comment_ajax = `
+                    var parent_comment_user = data.parent_comment_user;
+                    var parent_comment_content = data.parent_comment_content;
+                    
+                    if (parent_comment_id) {
+                        var comment_ajax = `
+                            <li class="list-group-item">
+                                <div>
+                                    <a href=""># 本楼</a> &nbsp;&nbsp;
+                                    ${create_time} &nbsp;&nbsp;
+                                    <a href="/${username}">${username}</a>
+                                </div>
+                                <div class="well">
+                                    ${parent_comment_user}：${parent_comment_content}
+                                </div>
+                                <div style="margin: 17px 0 17px 5px;">${content}</div>
+                            </li>`
+                            ;
+                    }else{
+                        var comment_ajax = `
                             <li class="list-group-item">
                                 <div>
                                     <a href=""># 本楼</a> &nbsp;&nbsp;
@@ -128,14 +152,19 @@
                                 </div>
                                 <div style="margin: 17px 0 17px 5px;">${content}</div>
                             </li>`
-                    ;
-                    
-                    $("ul.comment_list").append(comment_ajax);
+                            ;
+                    }
 
+                    // 显示评论
+                    $("ul.comment_list").append(comment_ajax);
+                    
+                    // 成功信息提示
                     $("#comment_msg").removeClass("comment_msg_fail");
                     $("#comment_msg").addClass("comment_msg_pass");
                     $("#comment_msg").html("提交评论成功");
 
+                    // 评论内容区清空
+                    $("#comment_content").val("")
 
                 },
             })
@@ -153,7 +182,15 @@
 
     })
 
-
+    // 回复按钮事件
+    $(".reply_btn").click(function () {
+        $("#comment_content").focus();
+        var comment_id = $(this).attr("comment_id")
+        var p_name = $(this).attr("username");
+        var val = "@" + p_name + '\n';
+        $("#comment_content").val(val)
+        $("#comment_content").attr("parent_comment_id", comment_id);
+    })
 </script>
 
 {% endblock %}
