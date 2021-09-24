@@ -80,3 +80,7 @@
 .comments {
     margin-top: 38px;
 }
+
+.comment_count {
+    color: blue;
+}

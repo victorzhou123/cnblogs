@@ -31,26 +31,32 @@
     </div>
 </div>
 
-<!-- 评论区 -->
+<!-- 评论区（评论树） -->
+<div class="comments_area_tree">
+    <div style="margin: 10px 0 10px 0;">评论树 共有({{article.comment_count}})条评论</div>
+
+</div>
+
+<!-- 评论区（评论楼） -->
 <div class="comments_area">
     <div style="margin-bottom: 10px;">评论列表</div>
     <ul class="list-group comment_list">
         {% for comment in comments %}
-            <li class="list-group-item">
-                <div>
-                    <a href=""># {{forloop.counter}}楼</a> &nbsp;&nbsp;
-                    {{comment.create_time|date:"Y-m-d H:i"}} &nbsp;&nbsp;
-                    <a href="/{{comment.user}}">{{comment.user}}</a>
-                    <a class="pull-right reply_btn" username="{{comment.user}}" comment_id="{{comment.nid}}">回复</a>
-                </div>
-                    <!-- 显示父评论 -->
-                    {% if comment.parent_comment_id %}
-                    <div class="well">
-                        {{comment.parent_comment.user}}：{{comment.parent_comment.content}}
-                    </div>
-                    {% endif %}
-                <div style="margin: 17px 0 17px 5px;">{{comment.content}}</div>
-            </li>
+        <li class="list-group-item">
+            <div>
+                <a href=""># {{forloop.counter}}楼</a> &nbsp;&nbsp;
+                {{comment.create_time|date:"Y-m-d H:i"}} &nbsp;&nbsp;
+                <a href="/{{comment.user}}">{{comment.user}}</a>
+                <a class="pull-right reply_btn" username="{{comment.user}}" comment_id="{{comment.nid}}">回复</a>
+            </div>
+            <!-- 显示父评论 -->
+            {% if comment.parent_comment_id %}
+            <div class="well">
+                {{comment.parent_comment.user}}：{{comment.parent_comment.content}}
+            </div>
+            {% endif %}
+            <div style="margin: 17px 0 17px 5px;">{{comment.content}}</div>
+        </li>
         {% endfor%}
     </ul>
 </div>
@@ -127,7 +133,7 @@
                     var content = data.content;
                     var parent_comment_user = data.parent_comment_user;
                     var parent_comment_content = data.parent_comment_content;
-                    
+
                     if (parent_comment_id) {
                         var comment_ajax = `
                             <li class="list-group-item">
@@ -142,7 +148,7 @@
                                 <div style="margin: 17px 0 17px 5px;">${content}</div>
                             </li>`
                             ;
-                    }else{
+                    } else {
                         var comment_ajax = `
                             <li class="list-group-item">
                                 <div>
@@ -157,7 +163,7 @@
 
                     // 显示评论
                     $("ul.comment_list").append(comment_ajax);
-                    
+
                     // 成功信息提示
                     $("#comment_msg").removeClass("comment_msg_fail");
                     $("#comment_msg").addClass("comment_msg_pass");
@@ -180,6 +186,54 @@
             $("#comment_msg").html("");
         }, 2000)
 
+    })
+
+    // 评论树显示
+    $.ajax({
+        url: "/comment_tree/",
+        type: "post",
+        data: {
+            "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+            "article_number": "{{article.nid}}",
+        },
+        success: function (comments) {
+            var counter = 1
+
+            var create_comment_tree = function create_comment_tree(comments, flag) {
+
+                        $.each(comments, function (index, comment) {
+                        var nid = comment[0];
+                        var username = comment[1];
+                        var content = comment[2];
+                        var parent_comment_id = comment[3];
+
+                        var s = `
+                            <div class="list-group-item">
+                                <div>
+                                    <a href=""># ${counter}楼</a> &nbsp;&nbsp;
+                                    <a href="/${username}">${username}</a>
+                                    <a class="pull-right reply_btn" username="${username}" comment_tree_id=${nid}>回复</a>
+                                </div>
+                                <div style="margin: 17px 0 17px 5px;">${content}</div>
+                            </div>
+                            `;
+
+                        if (!parent_comment_id && flag) {
+                            $(".comments_area_tree").append(s);
+                            counter++;
+                        }
+                        if (parent_comment_id && !flag) {
+                            $("[comment_tree_id=" + parent_comment_id + "]").parent().parent().append(s);  // 这个地方太妙了
+                        }
+                    }
+                )
+                
+            }
+
+            create_comment_tree(comments, flag=1);
+            create_comment_tree(comments, flag=0);
+
+        },
     })
 
     // 回复按钮事件

@@ -30,6 +30,8 @@ urlpatterns = [
     path('logout/', views.logout),
     path('digg/', views.digg),
     path('comment/', views.comment),
+    path('comment_tree/', views.comment_tree),
+
 
 
     # media配置

@@ -1,15 +1,18 @@
 # python标准库
 import json
+from django import contrib
 
 # 第三方插件库
+from blog import models
 from django.db.models.aggregates import Count
 from blog.models import Category, UserInfo
 from django.shortcuts import redirect, render, HttpResponse
 from django.contrib import auth    # 超级用户模块
 from django.http import JsonResponse, response
-from blog import models
+from django.db import transaction
 from django.db.models.functions import TruncMonth  # 使日期截断至月
 from django.db.models import F
+from django.core.mail import send_mail
 
 # 自建库
 from .Myforms import UserForm
@@ -170,6 +173,7 @@ def article_detail(request, username, article_number):
         context["comments"] = comments
         return render(request, 'article_detail.html', context)
 
+
 def digg(request):
     '''
     点赞视图函数
@@ -198,7 +202,7 @@ def digg(request):
 
 def comment(request):
     '''
-    评论视图函数
+    评论视图函数(包含邮件发送)
     '''
     response = {}
 
@@ -207,7 +211,14 @@ def comment(request):
         content = request.POST.get("content")
         article_number = request.POST.get("article_number")
         parent_comment_id = request.POST.get("parent_comment_id")
-        comment_obj = models.Comment.objects.create(content=content, article_id=article_number, user=user, parent_comment_id=parent_comment_id)
+
+        article = models.Article.objects.filter(nid=article_number).first()
+
+        # 事务操作
+        with transaction.atomic():
+            comment_obj = models.Comment.objects.create(content=content, article_id=article_number, user=user, parent_comment_id=parent_comment_id)
+            models.Article.objects.filter(nid=article_number).update(comment_count=F("comment_count")+1)
+
         parent_comment_obj = comment_obj.parent_comment
         response["create_time"] = comment_obj.create_time.strftime("%Y-%m-%d %X")
         response["username"] = request.user.username
@@ -215,5 +226,23 @@ def comment(request):
         response["parent_comment_user"] = parent_comment_obj.user.username
         response["parent_comment_content"] = parent_comment_obj.content
 
+        # 发送邮件
+
+        send_mail(
+            "您的文章%s新增了一条评论内容"%article.title,
+            content,
+
+        )
+
+
         return JsonResponse(response)
 
+def comment_tree(request):
+    '''
+    评论树视图函数
+    '''
+    if request.is_ajax():
+        article_number = request.POST.get("article_number")
+        comments = list(models.Comment.objects.filter(article_id=article_number).values_list(
+            "nid", "user__username", "content", "parent_comment_id" ))
+        return JsonResponse(comments, safe=False)
