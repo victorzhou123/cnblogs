@@ -1,6 +1,7 @@
 # python标准库
 import json
 from django import contrib
+import threading
 
 # 第三方插件库
 from blog import models
@@ -17,6 +18,7 @@ from django.core.mail import send_mail
 # 自建库
 from .Myforms import UserForm
 from blog.utils.validCode import get_valid_code_img
+from cnblog import settings
 
 # ---逻辑内容---
 
@@ -226,14 +228,16 @@ def comment(request):
         response["parent_comment_user"] = parent_comment_obj.user.username
         response["parent_comment_content"] = parent_comment_obj.content
 
-        # 发送邮件
+        # 异步发送邮件
 
-        send_mail(
-            "您的文章%s新增了一条评论内容"%article.title,
-            content,
+        subject = "您的文章%s新增了一条评论内容"%article.title
+        message = content
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [article.user.email]
 
-        )
-
+        threading.Thread(target=send_mail, args=(
+            subject, message, from_email, recipient_list,
+        ))
 
         return JsonResponse(response)
 
