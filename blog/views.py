@@ -221,12 +221,13 @@ def comment(request):
             comment_obj = models.Comment.objects.create(content=content, article_id=article_number, user=user, parent_comment_id=parent_comment_id)
             models.Article.objects.filter(nid=article_number).update(comment_count=F("comment_count")+1)
 
-        parent_comment_obj = comment_obj.parent_comment
         response["create_time"] = comment_obj.create_time.strftime("%Y-%m-%d %X")
         response["username"] = request.user.username
         response["content"] = content
-        response["parent_comment_user"] = parent_comment_obj.user.username
-        response["parent_comment_content"] = parent_comment_obj.content
+        if parent_comment_id:
+            parent_comment_obj = comment_obj.parent_comment
+            response["parent_comment_user"] = parent_comment_obj.user.username
+            response["parent_comment_content"] = parent_comment_obj.content
 
         # 异步发送邮件
 
