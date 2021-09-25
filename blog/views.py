@@ -230,7 +230,7 @@ def comment(request):
 
         # 异步发送邮件
 
-        subject = "您的文章%s新增了一条评论内容"%article.title
+        subject = "您的文章%s新增了一条评论内容，请查看"%article.title
         message = content
         from_email = settings.EMAIL_HOST_USER
         recipient_list = [article.user.email]
