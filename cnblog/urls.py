@@ -31,10 +31,16 @@ urlpatterns = [
     path('digg/', views.digg),
     path('comment/', views.comment),
     path('comment_tree/', views.comment_tree),
+    path('upload/', views.upload),
+
+
 
     # 后台管理页面
     re_path("backend/$", views.backend),
     re_path("backend/add_article/$", views.add_article),
+    re_path('backend/del_article/(?P<article_number>\d+)/$', views.del_article),
+    re_path('backend/upd_article/(?P<article_number>\d+)/$', views.upd_article),
+
 
 
     # media配置

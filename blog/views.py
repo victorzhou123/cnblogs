@@ -1,7 +1,13 @@
 # python标准库
 import json
+import re
+from sys import path
 from django import contrib
 import threading
+import os
+from bs4 import BeautifulSoup
+from django.db.models.signals import pre_migrate
+from django.template.defaultfilters import title
 
 # 第三方插件库
 from blog import models
@@ -265,8 +271,76 @@ def backend(request):
 
     return render(request, 'backend/backend.html', context)
 
+@login_required
 def add_article(request):
     '''
     文章添加页面
     '''
+    if request.method == "POST":
+        title = request.POST.get("title")
+        content = request.POST.get("content")
+
+        soup = BeautifulSoup(content, "html.parser")
+        # 过滤script标签
+        for tag in soup.find_all():
+            if tag.name == "script":
+                tag.decompose()
+
+        # 获取content中的文本为desc
+        desc = soup.text[0:150] + "..."
+
+        models.Article.objects.create(title=title, content=str(soup), desc=desc, user=request.user)
+
+        path = os.path.join("/",request.user.username,"backend").replace("\\","/")
+        return redirect(path)
+
     return render(request, 'backend/add_article.html')
+
+@login_required
+def del_article(request, article_number):
+    '''
+    文章删除视图
+    '''
+    models.Article.objects.filter(user=request.user, nid=article_number).delete()
+    path = os.path.join("/",request.user.username,"backend").replace("\\","/")
+    return redirect(path)
+
+@login_required
+def upd_article(request, article_number):
+    '''
+    文章删除视图
+    '''
+    article = models.Article.objects.filter(user=request.user, nid=article_number).first()
+    title = article.title
+    content = article.content
+
+    if request.method == "POST":
+        title = request.POST.get("title")
+        content = request.POST.get("content")
+
+        models.Article.objects.filter(user=request.user, nid=article_number).update(title=title,content=content)
+
+        path = os.path.join("/", request.user.username, "articles", article_number).replace("\\", "/")
+
+        return redirect(path)
+
+    return render(request, 'backend/upd_article.html', {"title":title, "content":content})
+
+def upload(request):
+    '''
+    图片上传视图
+    '''
+    img = request.FILES.get("upload_img")
+    path = os.path.join(settings.MEDIA_ROOT, "add_article_img", img.name)
+
+    with open(path, 'wb') as f:
+        for line in img:
+            f.write(line)
+
+    response = {
+        "error": 0,
+        "url": "/media/add_article_img/%s"%img.name,
+    }
+
+    return HttpResponse(json.dumps(response))
+

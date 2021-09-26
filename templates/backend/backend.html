@@ -20,11 +20,11 @@
         <tbody>
             {% for article in articles %}
             <tr>
-                <th>{{article.title}}</th>
+                <th><a href="/{{user.username}}/articles/{{article.nid}}">{{article.title}}</a></th>
                 <th>{{article.comment_count}}</th>
                 <th>{{article.up_count}}</th>
-                <th><a href="">编辑</a></th>
-                <th><a href="">删除</a></th>
+                <th><a href="/{{user.username}}/backend/upd_article/{{article.nid}}">编辑</a></th>
+                <th><a href="/{{user.username}}/backend/del_article/{{article.nid}}">删除</a></th>
             </tr>
             {% endfor %}
         </tbody>
