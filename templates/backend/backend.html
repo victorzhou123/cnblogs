@@ -1,0 +1,34 @@
+{% extends 'backend/base.html' %}
+
+{% block content %}
+
+<style>
+    .articles {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="articles">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>标题</th>
+                <th>评论数</th>
+                <th>点赞数</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+            <tr>
+                <th>{{article.title}}</th>
+                <th>{{article.comment_count}}</th>
+                <th>{{article.up_count}}</th>
+                <th><a href="">编辑</a></th>
+                <th><a href="">删除</a></th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

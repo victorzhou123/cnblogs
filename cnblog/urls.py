@@ -22,9 +22,9 @@ from cnblog import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.index),
     path('login/', views.login),
     path('index/', views.index),
-    path('', views.index),
     path('register/', views.register),
     path('get_validCode_img/', views.get_validCode_img),
     path('logout/', views.logout),
@@ -32,6 +32,9 @@ urlpatterns = [
     path('comment/', views.comment),
     path('comment_tree/', views.comment_tree),
 
+    # 后台管理页面
+    re_path("backend/$", views.backend),
+    re_path("backend/add_article/$", views.add_article),
 
 
     # media配置

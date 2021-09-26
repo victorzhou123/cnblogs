@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
+    <script src="\static\js\jquery.js"></script>
+    <script src="\static\js\bootstrap.min.js"></script>
+    <script src="\static\js\jquery-3.2.1.min.js"></script>
+    <style>
+        .header {
+            width: 100%;
+            height: 60px;
+            background-color: rgb(46, 44, 44);
+        }
+
+        .header .title {
+            font-size: 18px;
+            font-weight: 100;
+            line-height: 60px;
+            color: white;
+        }
+
+        .backend {
+            float: right;
+            color: white;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        .article_info {
+            color: grey;
+        }
+        .backend_content {
+            margin-top: 20px;
+        }
+    </style>
+    <title>后台管理界面</title>
+</head>
+<body>
+
+<!-- 下面是导航 -->
+<div class="header">
+    <div class="content">
+        <p class="title">
+            <span>
+                {{user.username}}的后台管理界面
+            </span>
+            <a href="/logout/" class="backend">注销</a>
+            <a href="/{{user.username}}" class="backend"><span class="glyphicon glyphicon-user"></span> {{user.username}}</a>
+        </p>
+    </div>
+</div>
+<!-- 下面是内容 -->
+<div class="backend_content">
+    <div class="container-fluid">
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">操作</div>
+                <div class="panel-body">
+                    <a href="/{{user.username}}/backend/add_article/" class="command1">添加文章</a>
+                </div>
+                <div class="panel-body">
+                    <a href="" class="command2"></a>
+                </div>
+                <div class="panel-body">
+                    <a href="" class="command3"></a>
+                </div>
+                <div class="panel-body">
+                    <a href="" class="command4"></a>
+                </div>
+              </div>
+        </div>
+    
+        <div class="col-md-8">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab"
+                                                            data-toggle="tab">文章</a></li>
+                <li role="presentation"><a href="#profile" aria-controls="profile" role="tab"
+                                            data-toggle="tab">随笔</a></li>
+                <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">日记</a></li>
+                <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">评论</a></li>
+            </ul>
+            {% block content %}
+        
+            {% endblock %}
+        </div>
+    </div>  
+
+</div>
+ 
+
+</body>
+</html>
+

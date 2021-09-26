@@ -14,6 +14,7 @@ from django.db import transaction
 from django.db.models.functions import TruncMonth  # 使日期截断至月
 from django.db.models import F
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 
 # 自建库
 from .Myforms import UserForm
@@ -251,3 +252,21 @@ def comment_tree(request):
         comments = list(models.Comment.objects.filter(article_id=article_number).values_list(
             "nid", "user__username", "content", "parent_comment_id" ))
         return JsonResponse(comments, safe=False)
+
+@login_required
+def backend(request):
+    '''
+    后台管理页面
+    '''
+    username = request.user.username
+    context = get_classication_data(username)  # blog user article_count
+    articles = models.Article.objects.filter(user = context.get("user").nid).all()
+    context['articles'] = articles
+
+    return render(request, 'backend/backend.html', context)
+
+def add_article(request):
+    '''
+    文章添加页面
+    '''
+    return render(request, 'backend/add_article.html')

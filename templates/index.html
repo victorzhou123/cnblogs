@@ -38,9 +38,10 @@
           <li class="dropdown">
             {% if request.user.username %}
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-              aria-expanded="false"> {{request.user.username}} <span class="caret"></span></a>
+              aria-expanded="false"> <span class="glyphicon glyphicon-user"></span> {{request.user.username}} <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="#">我的主页</a></li>
+              <li><a href="/{{request.user.username}}">我的主页</a></li>
+              <li><a href="/{{request.user.username}}/cn_backend">后台管理</a></li>
               <li><a href="#">修改密码</a></li>
               <li><a href="#">修改头像</a></li>
               <li role="separator" class="divider"></li>
