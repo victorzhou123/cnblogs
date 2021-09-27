@@ -38,7 +38,7 @@
 </div>
 
 <!-- 评论区（评论楼） -->
-<div class="comments_area">
+<!-- <div class="comments_area">
     <div style="margin-bottom: 10px;">评论列表</div>
     <ul class="list-group comment_list">
         {% for comment in comments %}
@@ -49,7 +49,6 @@
                 <a href="/{{comment.user}}">{{comment.user}}</a>
                 <a class="pull-right reply_btn" username="{{comment.user}}" comment_id="{{comment.nid}}">回复</a>
             </div>
-            <!-- 显示父评论 -->
             {% if comment.parent_comment_id %}
             <div class="well">
                 {{comment.parent_comment.user}}：{{comment.parent_comment.content}}
@@ -59,7 +58,7 @@
         </li>
         {% endfor%}
     </ul>
-</div>
+</div> -->
 
 <!-- 发表评论 -->
 <div class="comments">
@@ -188,6 +187,16 @@
 
     })
 
+    // 回复按钮事件
+    $(".comments_area_tree").on('click', '.reply_btn', function () {
+        $("#comment_content").focus();
+        var comment_id = $(this).attr("comment_id");
+        var p_name = $(this).attr("username");
+        var val = "@" + p_name + '\n';
+        $("#comment_content").val(val);
+        $("#comment_content").attr("parent_comment_id", comment_id);
+    })
+
     // 评论树显示
     $.ajax({
         url: "/comment_tree/",
@@ -236,15 +245,7 @@
         },
     })
 
-    // 回复按钮事件
-    $(".reply_btn").click(function () {
-        $("#comment_content").focus();
-        var comment_id = $(this).attr("comment_id")
-        var p_name = $(this).attr("username");
-        var val = "@" + p_name + '\n';
-        $("#comment_content").val(val)
-        $("#comment_content").attr("parent_comment_id", comment_id);
-    })
+
 </script>
 
 {% endblock %}

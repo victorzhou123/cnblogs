@@ -99,7 +99,7 @@ def register(request):
             if avatar_obj:
                 extra["avatar"] = avatar_obj
 
-            UserInfo.objects.create(
+            UserInfo.objects.create_user(
                 username=user, password=pwd, email=email, **extra)
 
         else:
