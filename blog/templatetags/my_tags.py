@@ -14,10 +14,10 @@ def get_classification_style(user):
     article_count = article_count_dic.get("c")
     # 查询当前站点每一个分类的名称以及对应的文章数
     category_list = models.Category.objects.filter(blog=blog).values("nid").annotate(
-        c=Count("nid")).values_list("title", "c")
+        c=Count("article__title")).values_list("title", "c")
 
     # 查询当前站点的每一个标签名称以及对应的文章数
-    tag_list = models.Tag.objects.filter(blog=blog).values("article__nid").annotate(
+    tag_list = models.Tag.objects.filter(blog=blog).values("nid").annotate(
         c=Count("article__nid")).values_list("title", "c")
 
     # 查询当前站点每一个年月的名称以及对应的文章数

@@ -141,9 +141,6 @@
                                     ${create_time} &nbsp;&nbsp;
                                     <a href="/${username}">${username}</a>
                                 </div>
-                                <div class="well">
-                                    ${parent_comment_user}：${parent_comment_content}
-                                </div>
                                 <div style="margin: 17px 0 17px 5px;">${content}</div>
                             </li>`
                             ;
@@ -161,7 +158,7 @@
                     }
 
                     // 显示评论
-                    $("ul.comment_list").append(comment_ajax);
+                    $("[comment_tree_id="+parent_comment_id+"]").parent().parent().append(comment_ajax);
 
                     // 成功信息提示
                     $("#comment_msg").removeClass("comment_msg_fail");
@@ -190,7 +187,8 @@
     // 回复按钮事件
     $(".comments_area_tree").on('click', '.reply_btn', function () {
         $("#comment_content").focus();
-        var comment_id = $(this).attr("comment_id");
+        var comment_id = $(this).attr("comment_tree_id");
+        console.log(comment_id)
         var p_name = $(this).attr("username");
         var val = "@" + p_name + '\n';
         $("#comment_content").val(val);

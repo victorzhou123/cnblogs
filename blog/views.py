@@ -68,7 +68,7 @@ def get_validCode_img(request):
 
 def index(request):
 
-    article_list = models.Article.objects.all()
+    article_list = models.Article.objects.all().order_by("-nid")
 
     return render(request, 'index.html', {"article_list": article_list})
 
@@ -141,23 +141,26 @@ def home_site(request, username, **kwargs):
 
         # 获取当前站点的所有文章
         # 基于对象查询
-        article_list = user.article_set.all()
+        # article_list = user.article_set.all()
         # 基于__查询，JOIN查询
-        # article_list = models.Article.objects.filter(user=user).all()
+        article_list = models.Article.objects.filter(user=user).all()
+
         # 判断是否是跳转
 
         if kwargs:
             condition = kwargs.get("condition")
             param = kwargs.get("param")
+            blog = models.Blog.objects.filter(site_name=username).first()
 
             if condition == "category":
-                article_list = article_list.filter(category__title=param).all()
+                article_list = article_list.filter(category__title=param, category__blog=blog).all()
             elif condition == "tag":
-                article_list = article_list.filter(tags__title=param).all()
+                print(param)
+                article_list = article_list.filter(tags__title=param, tags__blog=blog).all()
             elif condition == "archive":
                 year, month = param.split("-")
                 article_list = article_list.filter(
-                    create_time__year=year, create_time__month=month).all()
+                    create_time__year=year, create_time__month=month, tags__blog=blog).all()
 
         # 添加article_list到字典中去
         context["article_list"] = article_list
@@ -276,9 +279,13 @@ def add_article(request):
     '''
     文章添加页面
     '''
+    user = request.user
+    category_list = models.Category.objects.filter(blog=user.blog).all()
     if request.method == "POST":
         title = request.POST.get("title")
         content = request.POST.get("content")
+        category_id = request.POST.get("category_id")
+        print(category_id)
 
         soup = BeautifulSoup(content, "html.parser")
         # 过滤script标签
@@ -289,12 +296,12 @@ def add_article(request):
         # 获取content中的文本为desc
         desc = soup.text[0:150] + "..."
 
-        models.Article.objects.create(title=title, content=str(soup), desc=desc, user=request.user)
+        models.Article.objects.create(title=title, content=str(soup), desc=desc, user=request.user, category_id=category_id)
 
         path = os.path.join("/",request.user.username,"backend").replace("\\","/")
         return redirect(path)
 
-    return render(request, 'backend/add_article.html')
+    return render(request, 'backend/add_article.html', {"category_list": category_list})
 
 @login_required
 def del_article(request, article_number):
