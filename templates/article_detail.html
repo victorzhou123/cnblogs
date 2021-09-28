@@ -144,6 +144,8 @@
                                 <div style="margin: 17px 0 17px 5px;">${content}</div>
                             </li>`
                             ;
+                        // 显示评论
+                        $("[comment_tree_id="+parent_comment_id+"]").parent().parent().append(comment_ajax);
                     } else {
                         var comment_ajax = `
                             <li class="list-group-item">
@@ -155,10 +157,10 @@
                                 <div style="margin: 17px 0 17px 5px;">${content}</div>
                             </li>`
                             ;
+                        $(".comments_area_tree").append(comment_ajax);    
                     }
 
-                    // 显示评论
-                    $("[comment_tree_id="+parent_comment_id+"]").parent().parent().append(comment_ajax);
+
 
                     // 成功信息提示
                     $("#comment_msg").removeClass("comment_msg_fail");
@@ -167,6 +169,7 @@
 
                     // 评论内容区清空
                     $("#comment_content").val("")
+                    // window.localtion.href("/{{username}}/articles/{{article_number}}")
 
                 },
             })
