@@ -27,6 +27,7 @@
             <option value="{{category.nid}}">{{category.title}}</option>
             {% endfor %}
         </select>
+        <!-- <div id="add_category"class="glyphicon glyphicon-plus" title="添加分类"></div> -->
     </div>
     <input type="submit" class="btn btn-default" value="提交" style="margin-top: 10px;">
 
@@ -42,6 +43,36 @@
                 filePostName: "upload_img",
             });
     });
+
+    // 添加分类
+    // $("#add_category").click(function () {
+    //     const s = `
+    //         <div>
+    //         <input class="new_category"></input>
+    //         <a class="new_category_btn glyphicon glyphicon-ok"></a>
+    //         </div>
+    //     `;
+    //     $(this).parent().append(s)
+    // })
+
+    // 确认按钮事件
+    // $("[class='new_category_btn']").on("click", function () {
+    //     const new_category = $(".new_category").val();
+    //     console.log(new_category)
+    //     alert("123")
+    //     $.ajax({
+    //         url:"/add_category/",
+    //         data: new_category,
+    //         success: function (my_category) {
+    //             var s = `
+    //                 <option value="${my_category.nid}">${my_category.title}</option>
+    //             `;
+    //             $("[name='category_id']").append(s);
+    //         }
+    //     })
+    // })
+
+
 </script>
 
 

@@ -39,7 +39,13 @@
                 </div>
 
                 {% endfor %}
+                <!-- 博客名称 -->
+                <div class="form-group">
+                    <label for="blog_name">博客名称</label>
+                    <input type="text" id="blog_name" name="blog_name" class="form-control">
+                </div>
 
+                <!-- 头像 -->
                 <div class="form-group">
                     <label for="avatar">
                         头像
@@ -78,6 +84,7 @@
             formdata.append("pwd", $("#id_pwd").val());
             formdata.append("re_pwd", $("#id_re_pwd").val());
             formdata.append("email", $("#id_email").val());
+            formdata.append("blog_name", $("#blog_name").val());
             formdata.append("csrfmiddlewaretoken", '{{csrf_token}}');
             formdata.append("avatar", $("#avatar")[0].files[0]);
 

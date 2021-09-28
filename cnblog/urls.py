@@ -32,7 +32,7 @@ urlpatterns = [
     path('comment/', views.comment),
     path('comment_tree/', views.comment_tree),
     path('upload/', views.upload),
-
+    # path('upload/', views.add_category),
 
 
     # 后台管理页面
@@ -40,6 +40,9 @@ urlpatterns = [
     re_path("backend/add_article/$", views.add_article),
     re_path('backend/del_article/(?P<article_number>\d+)/$', views.del_article),
     re_path('backend/upd_article/(?P<article_number>\d+)/$', views.upd_article),
+    re_path('backend/add_category/$', views.add_category),
+    re_path('backend/del_category/$', views.del_category),
+
 
 
 

@@ -2,12 +2,13 @@
 import json
 import re
 from sys import path
+from PIL.Image import new
 from django import contrib
 import threading
 import os
 from bs4 import BeautifulSoup
 from django.db.models.signals import pre_migrate
-from django.template.defaultfilters import title
+from django.template.defaultfilters import default, title
 
 # 第三方插件库
 from blog import models
@@ -92,6 +93,7 @@ def register(request):
             user = form.cleaned_data.get("user")
             pwd = form.cleaned_data.get("pwd")
             email = form.cleaned_data.get("email")
+            blog_name = request.POST.get("blog_name")
             avatar_obj = request.FILES.get("avatar")
 
             extra = {}
@@ -99,8 +101,10 @@ def register(request):
             if avatar_obj:
                 extra["avatar"] = avatar_obj
 
+            # 创建博客
+            blog = models.Blog.objects.create(title=blog_name, site_name=user, theme="default.css")
             UserInfo.objects.create_user(
-                username=user, password=pwd, email=email, **extra)
+                username=user, password=pwd, email=email, blog=blog, **extra)
 
         else:
             response["msg"] = form.errors
@@ -351,3 +355,40 @@ def upload(request):
 
     return HttpResponse(json.dumps(response))
 
+
+@login_required
+def add_category(request):
+    '''
+    添加分类视图函数
+    '''
+    # if request.is_ajax():
+    #     user = request.user
+    #     blog = user.blog
+    #     new_category = request.POST.get("new_category")
+    #     my_category = models.Category.objects.create(title=new_category, blog=blog)
+    #     response = {}
+    #     response["title"] = my_category.title
+    #     response["nid"] = my_category.nid
+
+    #     return JsonResponse(response)
+    blog = request.user.blog
+    categorys = models.Category.objects.filter(blog=blog).all()
+
+    if request.is_ajax():
+        new_category = request.POST.get("new_category")
+        models.Category.objects.create(title=new_category, blog=blog)
+
+    return render(request, 'backend/add_category.html', {"categorys": categorys})
+
+@login_required
+def del_category(request):
+    '''
+    删除分类的视图函数
+    '''
+    category_id= request.POST.get("category_id")
+
+    models.Article.objects.filter(category_id=category_id).update(category_id="")
+
+    models.Category.objects.filter(nid=category_id).delete()
+
+    return HttpResponse('ok')

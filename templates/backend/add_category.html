@@ -1,0 +1,74 @@
+{% extends 'backend/base.html' %}
+
+{% block content %}
+{% csrf_token %}
+<div class="add_category" style="margin-top: 20px;">
+    <div class="alert-success text-center" style="margin-top: 20px;">现有分类</div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>分类名称</th>
+                <th>操作</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for category in categorys %}
+                    <th>
+                        {{category.title}}
+                    </th>
+                    <th>
+                        <a href="" class="upd_category_btn" category_id="{{category.nid}}">修改名称</a>
+                    </th>
+                    <th>
+                        <a class="del_category_btn" category_id="{{category.nid}}">删除</a>
+                    </th>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+
+    添加分类：<input class="new_category" type="text">
+    <button class="add_category_btn">确认</button>
+</div>
+
+<script>
+    // 添加标签
+    $(".add_category_btn").click(function() {
+        var new_category = $(".new_category").val();
+        var csrfmiddlewaretoken = $("[name='csrfmiddlewaretoken']").val()
+        $.ajax({
+            url: "",
+            type: "post",
+            data: {"new_category": new_category,
+            "csrfmiddlewaretoken": csrfmiddlewaretoken,
+        },
+            success:function() {
+                window.location.reload();
+            },
+        })
+    })
+
+    // 删除标签
+    $(".del_category_btn").click(function() {
+        const category_id = $(this).attr("category_id")
+        const csrfmiddlewaretoken = $("[name='csrfmiddlewaretoken']").val();
+        $.ajax({
+            url: "backend/del_category/",
+            type: "post",
+            data: {"category_id": category_id,
+            "csrfmiddlewaretoken": csrfmiddlewaretoken,
+        },
+            success: function(){
+                window.location.reload();
+            },
+        })
+    })
+
+    // 更改标签
+
+</script>
+
+
+{% endblock %}
