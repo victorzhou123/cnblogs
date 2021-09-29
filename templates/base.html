@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/static/blog/icon/v_icon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="/static/blog/icon/v_icon.png" type="image/x-icon"/>
     <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
     <script src="\static\js\jquery.js"></script>
     <script src="\static\js\bootstrap.min.js"></script>
     <script src="\static\js\jquery-3.2.1.min.js"></script>
     <style>
+        /* 导航栏 */
         .header {
             width: 100%;
             height: 60px;
@@ -29,9 +32,31 @@
             font-size: 14px;
             margin-right: 10px;
         }
+
+        .title_dropdown {
+            min-width: 60px;
+        }
+
+        .title_content {
+            margin-left: 45px;
+        }
+
+        /* 个人首页内容 */
+        .content_container {
+            margin: 20px 20px 0px 20px;
+        }
+
         .article_info {
             color: grey;
         }
+
+        #direct_select {
+            margin: 15px 45px 0px 0px;
+        }
+
+        .info_window {
+            text-align: center;
+        }   
     </style>
     <title>{{blog.title}}</title>
 </head>
@@ -40,32 +65,57 @@
     <!-- 以下是站头 -->
     <div class="header">
         <div class="content">
-            <p class="title">
-                <span>
+            <div class="title">
+                <span class="title_content">
                     {{blog.title}}
                 </span>
-                <a href="/" class="backend">返回首页</a>
-                <a href="/{{user.username}}/backend" class="backend">后台管理</a>
-            </p>
+                <div class="btn-group backend" id="direct_select">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true">
+                        <span class="glyphicon glyphicon-user"></span> {{user.username}} <span class="caret"></span>
+                    </button>
+                    <ul class="title_dropdown dropdown-menu">
+                      <li><a href="/"><span class="glyphicon glyphicon-globe"></span> 主站首页</a></li>
+                      <li><a href="/{{user.username}}/backend/"><span class="glyphicon glyphicon-wrench"></span> 后台管理</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="/logout/"><span class="glyphicon glyphicon-log-out"></span> 注销</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
     <!-- 以下是个人站点内容 -->
-    <div class="container-fluid" style="margin-left: 30px; margin-top: 30px;">
+    <div class="container-fluid content_container">
         <div class="row">
             <!-- 左侧信息栏内容 -->
             <!-- 个人信息+分类+标签+年月归档 -->
-            <div class="col-md-2" style="margin-right: 30px;">
+            <div class="col-md-2 info_window">
 
                 {% load my_tags %}
                 {% get_classification_style user %}
 
             </div>
             <!-- 文章列表 -->
-            <div class="col-md-9">
+            <div class="col-md-8">
                 {% block content %}
 
                 {% endblock %}
             </div>
+            <!-- 右侧功能栏 -->
+            <div class="col-md-2">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">
+                          title
+                      </h3>
+                    </div>
+                    <div class="panel-body">
+                      content
+                    </div>
+                </div>
+
+            </div>
+            
         </div>
     </div>
 

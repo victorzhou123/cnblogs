@@ -44,14 +44,14 @@ def get_valid_code_img(request):
 
     width=270
     height=40
-    for i in range(7):
+    for i in range(3):
         x1=random.randint(0,width)
         x2=random.randint(0,width)
         y1=random.randint(0,height)
         y2=random.randint(0,height)
         draw.line((x1,y1,x2,y2),fill=get_random_color())
 
-    for i in range(100):
+    for i in range(20):
         draw.point([random.randint(0, width), random.randint(0, height)], fill=get_random_color())
         x = random.randint(0, width)
         y = random.randint(0, height)

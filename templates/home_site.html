@@ -2,11 +2,17 @@
 
 {% block content %}
 
+<style>
+    .article_info {
+        margin-left: 15px;
+    }
+</style>
+
     {% for article in article_list %}
-    <div class="panel panel-primary">
+    <div class="panel panel-default">
         <!-- 标题 -->
-        <div class="panel-heading article-list">
-            <a href="/{{article.user}}/articles/{{article.nid}}" style="color: honeydew;">{{article.title}}</a>
+        <div class="panel-heading">
+            <a href="/{{article.user}}/articles/{{article.nid}}" class="article_title">{{article.title}}</a>
         </div>
         <!-- 内容 -->
         <div class="panel-body article-desc">
@@ -15,7 +21,7 @@
             </span>
         </div>
         <!-- 文章信息 -->
-        <div class="article_info" style="margin-left: 10px;">
+        <div class="article_info">
             <span style="margin-right: 20px;">
                 <a href="/{{article.user.username}}">{{article.user.username}}</a>
             </span>

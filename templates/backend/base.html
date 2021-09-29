@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/static/blog/icon/v_icon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="/static/blog/icon/v_icon.png" type="image/x-icon"/>
     <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
     <script src="\static\js\jquery.js"></script>
     <script src="\static\js\bootstrap.min.js"></script>
@@ -35,6 +37,21 @@
         .backend_content {
             margin-top: 20px;
         }
+        #direct_select {
+            margin-top: 15px;
+            margin-right: 45px;
+        }
+        .title_dropdown {
+            min-width: 60px;
+        }
+        .title_content {
+            margin-left: 45px;
+        }
+        .option_select {
+            width: 240px;
+            text-align:center;
+            margin: 0 auto;
+        }
     </style>
     <title>后台管理界面</title>
 </head>
@@ -43,33 +60,43 @@
 <!-- 下面是导航 -->
 <div class="header">
     <div class="content">
-        <p class="title">
-            <span>
+        <div class="title">
+            <span  class="title_content">
                 {{user.username}}的后台管理界面
             </span>
-            <a href="/logout/" class="backend">注销</a>
-            <a href="/{{user.username}}" class="backend"><span class="glyphicon glyphicon-user"></span> {{user.username}}</a>
-        </p>
+            <div class="btn-group backend" id="direct_select">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+                    <span class="glyphicon glyphicon-user"></span> {{user.username}} <span class="caret"></span>
+                </button>
+                <ul class="title_dropdown dropdown-menu">
+                  <li><a href="/"><span class="glyphicon glyphicon-globe"></span> 返回首页</a></li>
+                  <li><a href="/{{user.username}}"><span class="glyphicon glyphicon-home"></span> 返回主页</a></li>
+                  <li><a href="/{{user.username}}/backend/"><span class="glyphicon glyphicon-wrench"></span> 返回后台</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="/logout/"><span class="glyphicon glyphicon-log-out"></span> 注销</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 <!-- 下面是内容 -->
 <div class="backend_content">
     <div class="container-fluid">
         <div class="col-md-3">
-            <div class="panel panel-default">
-                <div class="panel-heading">操作</div>
-                <div class="panel-body">
-                    <a href="/{{user.username}}/backend/add_article/" class="command1">添加文章</a>
-                </div>
-                <div class="panel-body">
-                    <a href="/{{user.username}}/backend/add_category/" class="command2">管理分类</a>
-                </div>
-                <div class="panel-body">
-                    <a href="" class="command3">管理标签</a>
-                </div>
-                <div class="panel-body">
-                    <a href="" class="command4"></a>
-                </div>
+               <div class="panel panel-default option_select">
+                    <div class="panel-heading">操作</div>
+                    <div class="panel-body">
+                        <a href="/{{user.username}}/backend/add_article/" class="command1">添加文章</a>
+                    </div>
+                    <div class="panel-body">
+                        <a href="/{{user.username}}/backend/add_category/" class="command2">管理分类</a>
+                    </div>
+                    <div class="panel-body">
+                        <a href="" class="command3">管理标签</a>
+                    </div>
+                    <div class="panel-body">
+                        <a href="" class="command4"></a>
+                    </div>
               </div>
         </div>
     
