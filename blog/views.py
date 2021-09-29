@@ -319,23 +319,29 @@ def del_article(request, article_number):
 @login_required
 def upd_article(request, article_number):
     '''
-    文章删除视图
+    文章更新视图
     '''
+    user = request.user
     article = models.Article.objects.filter(user=request.user, nid=article_number).first()
+    category_list = models.Category.objects.filter(blog=user.blog).all()
+    active_category_id = models.Category.objects.filter(article__nid=article_number).values("nid").first()
+    active_category_id = active_category_id.get("nid")
+
     title = article.title
     content = article.content
 
     if request.method == "POST":
         title = request.POST.get("title")
         content = request.POST.get("content")
+        category_id = request.POST.get("category_id")
 
-        models.Article.objects.filter(user=request.user, nid=article_number).update(title=title,content=content)
+        models.Article.objects.filter(user=request.user, nid=article_number).update(title=title,content=content,category_id=category_id)
 
         path = os.path.join("/", request.user.username, "articles", article_number).replace("\\", "/")
 
         return redirect(path)
 
-    return render(request, 'backend/upd_article.html', {"title":title, "content":content})
+    return render(request, 'backend/upd_article.html', {"title":title, "content":content, "category_list":category_list, "active_category_id":active_category_id })
 
 def upload(request):
     '''

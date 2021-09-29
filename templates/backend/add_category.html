@@ -13,8 +13,8 @@
             </tr>
         </thead>
         <tbody>
+            {% for category in categorys %}
             <tr>
-                {% for category in categorys %}
                     <th>
                         {{category.title}}
                     </th>
@@ -24,8 +24,8 @@
                     <th>
                         <a class="del_category_btn" category_id="{{category.nid}}">删除</a>
                     </th>
-                {% endfor %}
             </tr>
+            {% endfor %}
         </tbody>
     </table>
 
