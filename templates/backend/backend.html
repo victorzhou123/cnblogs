@@ -6,6 +6,10 @@
     .articles {
         margin-top: 20px;
     }
+    /* 分页器CSS */
+    #pagination_bar {
+      text-align: center;
+    }
 </style>
 
 <div class="articles">
@@ -19,7 +23,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for article in articles %}
+            {% for article in current_page %}
             <tr>
                 <th><a href="/{{user.username}}/articles/{{article.nid}}">{{article.title}}</a></th>
                 <th><a href="/{{user.username}}/backend/add_category/">{{article.category}}</a></th>
@@ -32,5 +36,9 @@
         </tbody>
     </table>
 </div>
+
+<!-- 下面是分页器功能 -->
+{% include "paginator.html" %}
+
 
 {% endblock %}

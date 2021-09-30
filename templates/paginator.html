@@ -1,0 +1,41 @@
+<nav aria-label="Page navigation">
+    <nav id="pagination_bar">
+      <ul class="pagination">
+        {% if current_page.has_previous %}
+        <li>
+          <a href="?page={{current_page.previous_page_number}}" aria-label="Previous">
+            <span aria-hidden="true">上一页</span>
+          </a>
+        </li>
+        {% else %}
+        <li class="disabled">
+          <a href="#" aria-label="Previous">
+            <span aria-hidden="true">上一页</span>
+          </a>
+        </li>
+        {% endif %}
+
+        {% for i in page_range %}
+        {% if i == page %}
+        <li class="active"><a href="?page={{i}}">{{i}}</a></li>
+        {% else %}
+        <li><a href="?page={{i}}">{{i}}</a></li>
+        {% endif %}
+        {% endfor %}
+
+        {% if current_page.has_next %}
+        <li>
+          <a href="?page={{current_page.next_page_number}}" aria-label="Next">
+            <span aria-hidden="true">下一页</span>
+          </a>
+        </li>
+        {% else %}
+        <li class="disabled">
+          <a href="" aria-label="Next">
+            <span aria-hidden="true">下一页</span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+</nav>

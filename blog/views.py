@@ -2,7 +2,7 @@
 import json
 import re
 from sys import path
-from PIL.Image import new
+from PIL.Image import merge, new
 from django import contrib
 import threading
 import os
@@ -69,12 +69,12 @@ def get_validCode_img(request):
     return HttpResponse(data)
 
 
-def pageinator_bar(request, articles):
+def pageinator_bar(request, article_list, article_inside):
     '''
-    分页器视图函数
+    分页器模块，不是视图
     '''
     try:
-        paginator_bar = Paginator(articles, 1)   # paginator对象
+        paginator_bar = Paginator(article_list, article_inside)   # paginator对象
         page = int(request.GET.get("page", 1))   # 前端请求的page（号码）
     except EmptyPage as e:
         page = 1
@@ -86,13 +86,13 @@ def pageinator_bar(request, articles):
 
     # 保证活跃页面选项居中
     if page < 6:
-        page_range = range(1,10)
+        page_range = range(1, num_page+1)
     elif page > num_page-5:
         page_range = range(num_page-9,num_page+1)
     else:
         page_range = range(page-4, page+5)
 
-    context = {"page": page, "current_page": current_page, "count": count, "number_page": num_page, "page_range": page_range}
+    context = {"article_list": article_list, "page": page, "current_page": current_page, "count": count, "number_page": num_page, "page_range": page_range}
 
     return context
 
@@ -100,9 +100,7 @@ def pageinator_bar(request, articles):
 def index(request):
 
     article_list = models.Article.objects.all().order_by("-nid")
-    # 分页器
-    context = pageinator_bar(request, article_list)
-    context["article_list"] = article_list
+    context = pageinator_bar(request, article_list, 6)
 
     return render(request, 'index.html', context)
 
@@ -151,7 +149,7 @@ def register(request):
 
 def get_classication_data(username):
     '''
-    分类信息查询函数，不是视图！！
+    分类信息查询模块，不是视图！！
     '''
 
     user = UserInfo.objects.filter(username=username).first()
@@ -174,7 +172,7 @@ def home_site(request, username, **kwargs):
     else:
 
         # 分类信息查询
-        context = get_classication_data(username)
+        context_classication_data = get_classication_data(username)
 
         # 获取当前站点的所有文章
         # 基于对象查询
@@ -199,8 +197,10 @@ def home_site(request, username, **kwargs):
                 article_list = article_list.filter(
                     create_time__year=year, create_time__month=month, tags__blog=blog).all()
 
-        # 添加article_list到字典中去
-        context["article_list"] = article_list
+        # 分页器函数
+        context = pageinator_bar(request, article_list, 6)
+
+        context.update(context_classication_data)
 
         return render(request, "home_site.html", context)
 
@@ -305,9 +305,10 @@ def backend(request):
     后台管理页面
     '''
     username = request.user.username
-    context = get_classication_data(username)  # blog user article_count
-    articles = models.Article.objects.filter(user = context.get("user").nid).all()
-    context['articles'] = articles
+    context_classication_data = get_classication_data(username)  # blog user article_count
+    articles = models.Article.objects.filter(user = context_classication_data.get("user").nid).all()
+    context = pageinator_bar(request, articles, 15)
+    context.update(context_classication_data)
 
     return render(request, 'backend/backend.html', context)
 

@@ -6,9 +6,14 @@
     .article_info {
         margin-left: 15px;
     }
+    
+    /* 选择器CSS */
+    #pagination_bar {
+        text-align: center;
+    }
 </style>
 
-    {% for article in article_list %}
+    {% for article in current_page %}
     <div class="panel panel-default">
         <!-- 标题 -->
         <div class="panel-heading">
@@ -43,5 +48,8 @@
         </div>
     </div>
     {% endfor %}
+
+    <!-- 下面是分页器功能 -->
+    {% include "paginator.html" %}
 
 {% endblock %}
