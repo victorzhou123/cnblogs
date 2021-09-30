@@ -325,7 +325,8 @@ def upd_article(request, article_number):
     article = models.Article.objects.filter(user=request.user, nid=article_number).first()
     category_list = models.Category.objects.filter(blog=user.blog).all()
     active_category_id = models.Category.objects.filter(article__nid=article_number).values("nid").first()
-    active_category_id = active_category_id.get("nid")
+
+    active_category_id =  active_category_id.get("nid") if active_category_id else ""
 
     title = article.title
     content = article.content
