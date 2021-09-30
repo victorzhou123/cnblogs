@@ -4,11 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <link rel="icon" href="/static/blog/icon/v_icon.png" type="image/x-icon" />
-  <link rel="shortcut icon" href="/static/blog/icon/v_icon.png" type="image/x-icon"/>
+  <link rel="shortcut icon" href="/static/blog/icon/v_icon.png" type="image/x-icon" />
   <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
   <script src="\static\js\jquery.js"></script>
   <script src="\static\js\bootstrap.min.js"></script>
   <script src="\static\js\jquery-3.2.1.min.js"></script>
+  <style>
+    #pagination_bar {
+      text-align: center;
+    }
+  </style>
   <title>维克零博客</title>
 </head>
 
@@ -40,10 +45,12 @@
           <li class="dropdown">
             {% if request.user.username %}
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-              aria-expanded="false"> <span class="glyphicon glyphicon-user"></span> {{request.user.username}} <span class="caret"></span></a>
+              aria-expanded="false"> <span class="glyphicon glyphicon-user"></span> {{request.user.username}} <span
+                class="caret"></span></a>
             <ul class="dropdown-menu">
               <li><a href="/{{request.user.username}}"><span class="glyphicon glyphicon-home"></span> 我的主页</a></li>
-              <li><a href="/{{request.user.username}}/cn_backend"><span class="glyphicon glyphicon-wrench"></span> 后台管理</a></li>
+              <li><a href="/{{request.user.username}}/cn_backend"><span class="glyphicon glyphicon-wrench"></span>
+                  后台管理</a></li>
               <li><a href="#"><span class="glyphicon glyphicon-edit"></span> 修改密码</a></li>
               <li><a href="#"><span class="glyphicon glyphicon-edit"></span> 修改头像</a></li>
               <li role="separator" class="divider"></li>
@@ -85,7 +92,7 @@
       </div>
       <!-- 文章列表 -->
       <div class="col-md-6">
-        {% for article in article_list %}
+        {% for article in current_page %}
         <div class="panel panel-default">
           <!-- 标题 -->
           <div class="panel-heading article-list">
@@ -125,6 +132,51 @@
           </div>
         </div>
         {% endfor %}
+
+        <!-- 以下是文章分页器功能 -->
+        <nav aria-label="Page navigation">
+          <nav id="pagination_bar">
+            <ul class="pagination">
+              {% if current_page.has_previous %}
+              <li>
+                <a href="?page={{current_page.previous_page_number}}" aria-label="Previous">
+                  <span aria-hidden="true">上一页</span>
+                </a>
+              </li>
+              {% else %}
+              <li class="disabled">
+                <a href="#" aria-label="Previous">
+                  <span aria-hidden="true">上一页</span>
+                </a>
+              </li>
+              {% endif %}
+
+              {% for i in page_range %}
+              {% if i == page %}
+              <li class="active"><a href="?page={{i}}">{{i}}</a></li>
+              {% else %}
+              <li><a href="?page={{i}}">{{i}}</a></li>
+              {% endif %}
+              {% endfor %}
+
+              {% if current_page.has_next %}
+              <li>
+                <a href="?page={{current_page.next_page_number}}" aria-label="Next">
+                  <span aria-hidden="true">下一页</span>
+                </a>
+              </li>
+              {% else %}
+              <li class="disabled">
+                <a href="" aria-label="Next">
+                  <span aria-hidden="true">下一页</span>
+                </a>
+              </li>
+              {% endif %}
+            </ul>
+          </nav>
+        </nav>
+
+
       </div>
       <!-- 广告区 -->
       <div class="col-md-3">

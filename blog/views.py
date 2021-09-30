@@ -7,6 +7,7 @@ from django import contrib
 import threading
 import os
 from bs4 import BeautifulSoup
+import django
 from django.db.models.signals import pre_migrate
 from django.template.defaultfilters import default, title
 
@@ -16,11 +17,12 @@ from django.db.models.aggregates import Count
 from blog.models import Category, UserInfo
 from django.shortcuts import redirect, render, HttpResponse
 from django.contrib import auth    # 超级用户模块
-from django.http import JsonResponse, response
+from django.http import JsonResponse, request, response
 from django.db import transaction
 from django.db.models.functions import TruncMonth  # 使日期截断至月
 from django.db.models import F
 from django.core.mail import send_mail
+from django.core.paginator import Paginator, EmptyPage
 from django.contrib.auth.decorators import login_required
 
 # 自建库
@@ -67,11 +69,42 @@ def get_validCode_img(request):
     return HttpResponse(data)
 
 
+def pageinator_bar(request, articles):
+    '''
+    分页器视图函数
+    '''
+    try:
+        paginator_bar = Paginator(articles, 1)   # paginator对象
+        page = int(request.GET.get("page", 1))   # 前端请求的page（号码）
+    except EmptyPage as e:
+        page = 1
+
+    current_page = paginator_bar.page(page)      # 第page页的数据对象
+    count = paginator_bar.count                  # 数据总数
+    num_page = paginator_bar.num_pages           # 总页数
+    page_range = paginator_bar.page_range        # 页码的列表
+
+    # 保证活跃页面选项居中
+    if page < 6:
+        page_range = range(1,10)
+    elif page > num_page-5:
+        page_range = range(num_page-9,num_page+1)
+    else:
+        page_range = range(page-4, page+5)
+
+    context = {"page": page, "current_page": current_page, "count": count, "number_page": num_page, "page_range": page_range}
+
+    return context
+
+
 def index(request):
 
     article_list = models.Article.objects.all().order_by("-nid")
+    # 分页器
+    context = pageinator_bar(request, article_list)
+    context["article_list"] = article_list
 
-    return render(request, 'index.html', {"article_list": article_list})
+    return render(request, 'index.html', context)
 
 
 def logout(request):
@@ -289,16 +322,7 @@ def add_article(request):
         title = request.POST.get("title")
         content = request.POST.get("content")
         category_id = request.POST.get("category_id")
-        print(category_id)
-
-        soup = BeautifulSoup(content, "html.parser")
-        # 过滤script标签
-        for tag in soup.find_all():
-            if tag.name == "script":
-                tag.decompose()
-
-        # 获取content中的文本为desc
-        desc = soup.text[0:150] + "..."
+        soup, desc = soup_desc(content)
 
         models.Article.objects.create(title=title, content=str(soup), desc=desc, user=request.user, category_id=category_id)
 
@@ -306,6 +330,24 @@ def add_article(request):
         return redirect(path)
 
     return render(request, 'backend/add_article.html', {"category_list": category_list})
+
+def soup_desc(content):
+    '''
+    过滤script标签和desc截取视图
+    '''
+    soup = BeautifulSoup(content, "html.parser")
+    # 过滤script标签
+    for tag in soup.find_all():
+        if tag.name == "script":
+            tag.decompose()
+
+    # 获取content中的文本为desc
+    desc = soup.text[0:150]
+    if len(soup) >= 150:
+        desc +=  "..."
+
+    return soup, desc
+
 
 @login_required
 def del_article(request, article_number):
@@ -336,7 +378,10 @@ def upd_article(request, article_number):
         content = request.POST.get("content")
         category_id = request.POST.get("category_id")
 
-        models.Article.objects.filter(user=request.user, nid=article_number).update(title=title,content=content,category_id=category_id)
+        # soup防御xss攻击
+        soup, desc = soup_desc(content)
+
+        models.Article.objects.filter(user=request.user, nid=article_number).update(title=title,desc=desc, content=str(soup),category_id=category_id)
 
         path = os.path.join("/", request.user.username, "articles", article_number).replace("\\", "/")
 

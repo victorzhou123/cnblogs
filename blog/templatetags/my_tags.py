@@ -3,6 +3,8 @@ from blog import models
 from django.db.models import Count
 from django.db.models.functions import TruncMonth
 
+from blog.views import article_detail
+
 register = template.Library()
 
 @register.inclusion_tag("classfication.html")       # 可以传入classfication.html的模板
