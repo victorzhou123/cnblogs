@@ -188,14 +188,14 @@ def home_site(request, username, **kwargs):
             blog = models.Blog.objects.filter(site_name=username).first()
 
             if condition == "category":
-                article_list = article_list.filter(category__title=param, category__blog=blog).all()
+                article_list = article_list.filter(category__title=param, category__blog=blog).order_by("-nid").all()
             elif condition == "tag":
                 print(param)
-                article_list = article_list.filter(tags__title=param, tags__blog=blog).all()
+                article_list = article_list.filter(tags__title=param, tags__blog=blog).order_by("-nid").all()
             elif condition == "archive":
                 year, month = param.split("-")
                 article_list = article_list.filter(
-                    create_time__year=year, create_time__month=month, tags__blog=blog).all()
+                    create_time__year=year, create_time__month=month).all()
 
         # 分页器函数
         context = pageinator_bar(request, article_list, 6)
@@ -306,9 +306,9 @@ def backend(request):
     '''
     username = request.user.username
     context_classication_data = get_classication_data(username)  # blog user article_count
-    articles = models.Article.objects.filter(user = context_classication_data.get("user").nid).all()
+    articles = models.Article.objects.filter(user = context_classication_data.get("user").nid).order_by("-up_count","-comment_count","-nid").all()
     context = pageinator_bar(request, articles, 15)
-    context.update(context_classication_data)
+    context.update(context_classication_data) # context字典合并context_classication_data字典更新
 
     return render(request, 'backend/backend.html', context)
 
