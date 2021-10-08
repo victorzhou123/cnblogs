@@ -1,6 +1,6 @@
 from django.forms import widgets, ValidationError
 from django import forms
-from .models import UserInfo
+from blog import models
 
 
 class UserForm(forms.Form):
@@ -30,7 +30,7 @@ class UserForm(forms.Form):
         局部钩子：校验user是否已经存在
         '''
         val = self.cleaned_data.get("user")
-        user = UserInfo.objects.filter(username=val).first()
+        user = models.UserInfo.objects.filter(username=val).first()
 
         if not user:
             return val

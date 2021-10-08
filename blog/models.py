@@ -5,6 +5,8 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractUser
 
+from blog.views import article_detail
+
 
 class UserInfo(AbstractUser):
     """
@@ -60,6 +62,9 @@ class Tag(models.Model):
 
 
 class Article(models.Model):
+    '''
+    文章表
+    '''
     nid = models.AutoField(primary_key=True)
     title = models.CharField(max_length=50, verbose_name='文章标题')
     desc = models.CharField(max_length=255, verbose_name='文章描述')
@@ -82,6 +87,17 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class PageView(models.Model):
+    '''
+    访问量表
+    '''
+    nid = models.AutoField(primary_key=True)
+    pageview_count = models.IntegerField(default=0)
+    article = models.OneToOneField(
+        to="Article", to_field="nid", default=0, on_delete=models.CASCADE
+    )
 
 
 class Article2Tag(models.Model):

@@ -7,14 +7,13 @@ from django import contrib
 import threading
 import os
 from bs4 import BeautifulSoup
-import django
 from django.db.models.signals import pre_migrate
 from django.template.defaultfilters import default, title
+from blog import models
+
 
 # 第三方插件库
-from blog import models
 from django.db.models.aggregates import Count
-from blog.models import Category, UserInfo
 from django.shortcuts import redirect, render, HttpResponse
 from django.contrib import auth    # 超级用户模块
 from django.http import JsonResponse, request, response
@@ -134,7 +133,7 @@ def register(request):
 
             # 创建博客
             blog = models.Blog.objects.create(title=blog_name, site_name=user, theme="default.css")
-            UserInfo.objects.create_user(
+            models.UserInfo.objects.create_user(
                 username=user, password=pwd, email=email, blog=blog, **extra)
 
         else:
@@ -152,7 +151,7 @@ def get_classication_data(username):
     分类信息查询模块，不是视图！！
     '''
 
-    user = UserInfo.objects.filter(username=username).first()
+    user = models.UserInfo.objects.filter(username=username).first()
     blog = user.blog
     article_count_dic = models.Article.objects.filter(user=user).aggregate(c=Count("nid"))
     article_count = article_count_dic.get("c")
@@ -166,7 +165,7 @@ def home_site(request, username, **kwargs):
     个人站点视图
     '''
     # 判断用户是否存在
-    user = UserInfo.objects.filter(username=username).first()
+    user = models.UserInfo.objects.filter(username=username).first()
     if not user:
         return render(request, '404_notfound.html')
     else:
@@ -209,10 +208,11 @@ def article_detail(request, username, article_number):
     '''
     文章详情页
     '''
-    user = UserInfo.objects.filter(username=username).first()
+    user = models.UserInfo.objects.filter(username=username).first()
     article = models.Article.objects.filter(
         user=user, nid=article_number).first()
     comments = models.Comment.objects.filter(article=article).all()
+    models.PageView.objects.filter(article=article).update(pageview_count=F("pageview_count")+1)
 
     if not (user and article):
         return render(request, '404_notfound.html')
