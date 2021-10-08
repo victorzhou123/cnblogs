@@ -325,7 +325,8 @@ def add_article(request):
         category_id = request.POST.get("category_id")
         soup, desc = soup_desc(content)
 
-        models.Article.objects.create(title=title, content=str(soup), desc=desc, user=request.user, category_id=category_id)
+        article = models.Article.objects.create(title=title, content=str(soup), desc=desc, user=request.user, category_id=category_id)
+        models.PageView.objects.create(pageview_count=0, article=article)
 
         path = os.path.join("/",request.user.username,"backend").replace("\\","/")
         return redirect(path)
