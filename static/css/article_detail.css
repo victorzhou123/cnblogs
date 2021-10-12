@@ -1,6 +1,8 @@
 .article_info {
-    color: red;
+    color: gray;
+    text-align: right;
     font-size: 10px;
+    margin: 0px 30px -20px 0px;
 }
 
 #div_digg {
