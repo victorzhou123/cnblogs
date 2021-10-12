@@ -1,3 +1,8 @@
+.article_info {
+    color: red;
+    font-size: 10px;
+}
+
 #div_digg {
     float: right;
     margin-bottom: 10px;
