@@ -16,6 +16,9 @@
     .icp_info {
       background-color: rgb(248, 248, 248);
     }
+    .hot-reading, .hot-discuss {
+      margin: 0px 0px 10px 0px;
+    }
   </style>
   <title>维克零博客</title>
 </head>
@@ -81,16 +84,24 @@
       <!-- 筛选区 -->
       <div class="col-md-3">
         <div class="panel panel-default">
-          <div class="panel-body">
-            Panel content
+          <div class="panel-heading">
+            热门阅读
           </div>
-          <div class="panel-footer">Panel footer</div>
+          <div class="panel-body">
+            {% for article in article_hotreading %}
+              <div class="hot-reading"> <a href="/{{article.user}}/articles/{{article.nid}}">{{forloop.counter}}. {{article.title}}</a></div>
+            {% endfor %}
+          </div>
         </div>
-        <div class="panel panel-success">
-          <div class="panel-body">
-            Panel content
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            热门讨论
           </div>
-          <div class="panel-footer">Panel footer</div>
+          <div class="panel-body">
+            {% for article in article_hotdiscuss %}
+              <div class="hot-discuss"> <a href="/{{article.user}}/articles/{{article.nid}}">{{forloop.counter}}. {{article.title}}</a></div>
+            {% endfor %}
+          </div>
         </div>
       </div>
       <!-- 文章列表 -->
@@ -147,16 +158,16 @@
       <!-- 广告区 -->
       <div class="col-md-3">
         <div class="panel panel-default">
-          <div class="panel-body">
-            Panel content
+          <div class="panel-heading">
+            Panel heading
           </div>
-          <div class="panel-footer">Panel footer</div>
+          <div class="panel-body">Panel body</div>
         </div>
-        <div class="panel panel-success">
-          <div class="panel-body">
-            Panel content
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Panel heading
           </div>
-          <div class="panel-footer">Panel footer</div>
+          <div class="panel-body">Panel body</div>
         </div>
       </div>
 

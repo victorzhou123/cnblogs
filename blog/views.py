@@ -99,7 +99,12 @@ def pageinator_bar(request, article_list, article_inside):
 def index(request):
 
     article_list = models.Article.objects.all().order_by("-nid")
-    context = pageinator_bar(request, article_list, 6)
+    context = pageinator_bar(request, article_list, 6)       # context是个字典
+
+    article_hotreading = article_list.order_by("-pageview__pageview_count")[:10] # 热门阅读
+    article_hotdiscuss = article_list.order_by("-comment_count")[:10] # 热门阅读
+    context["article_hotreading"] = article_hotreading
+    context["article_hotdiscuss"] = article_hotdiscuss
 
     return render(request, 'index.html', context)
 
