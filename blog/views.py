@@ -33,6 +33,7 @@ from cnblog import settings
 
 
 def login(request):
+    request.session["kkk"] = "chenggong"
 
     if request.method == 'POST':
         response = {"user": None, "msg": None}  # 响应字典
