@@ -100,7 +100,7 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = 'default'
-SESSION_COOKIE_AGE = 60 * 5    #设置5分钟过期
+SESSION_COOKIE_AGE = 60 * 30    #设置30分钟过期
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
