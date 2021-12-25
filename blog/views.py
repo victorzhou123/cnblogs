@@ -281,16 +281,16 @@ def comment(request):
             response["parent_comment_user"] = parent_comment_obj.user.username
             response["parent_comment_content"] = parent_comment_obj.content
 
-        # 异步发送邮件
+        # # 异步发送邮件
 
-        subject = "您的文章%s新增了一条评论内容，请查看"%article.title
-        message = content
-        from_email = settings.EMAIL_HOST_USER
-        recipient_list = [article.user.email]
+        # subject = "您的文章%s新增了一条评论内容，请查看"%article.title
+        # message = content
+        # from_email = settings.EMAIL_HOST_USER
+        # recipient_list = [article.user.email]
 
-        threading.Thread(target=send_mail, args=(
-            subject, message, from_email, recipient_list,
-        ))
+        # threading.Thread(target=send_mail, args=(
+        #     subject, message, from_email, recipient_list,
+        # ))
 
         return JsonResponse(response)
 

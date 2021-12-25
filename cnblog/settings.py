@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-from static.blog.U_P.email_settings import EMAIL_HOST, EMAIL_HOST_PASSWORD, EMAIL_HOST_USER, EMAIL_PORT, EMAIL_BACKEND, EMAIL_FROM
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -153,19 +152,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")    # 给/media/起别名
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# 发送Email配置
-EMAIL_BACKEND = EMAIL_BACKEND
-# 发送方的smtp服务器地址
-EMAIL_HOST = EMAIL_HOST
-EMAIL_PORT = EMAIL_PORT
-# 发送方邮箱
-EMAIL_HOST_USER = EMAIL_HOST_USER
-# 发送方授权码
-EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
-# 收件人看到的发件人
-EMAIL_FROM = EMAIL_FROM
-
-LOGIN_URL = '/login/'
-
-X_FRAME_OPTIONS = 'SAMEORIGIN'
