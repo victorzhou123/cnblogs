@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'cnblog',
         'USER': 'root',
         'PASSWORD': 'Password@1',
-        'HOST': '127.0.0.1',
+        'HOST': 'mysql_master_01',
         'PORT': 3306
     }
 }
@@ -90,7 +90,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://redis_master_01:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PASSWORD": "Password@1"
