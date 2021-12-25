@@ -15,7 +15,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - "/project/vic0_blog/django:/usr/src/app"
+      - ".:/usr/src/app"
 
   redis_master_01:
     image: "redis"
@@ -23,9 +23,9 @@ services:
       - "6379:6379"
     container_name: redis_master_01
     volumes:
-      - "/project/vic0_blog/redis/redis.conf:/usr/local/etc/redis/redis.conf"
-      - /project/vic0_blog/redis/datadir:/data
-      - /project/vic0_blog/redis/logs:/logs
+      - "./redis/redis.conf:/usr/local/etc/redis/redis.conf"
+      - ./redis/datadir:/data
+      - ./redis/logs:/logs
     command: redis-server --port 6379 --requirepass Password@1  --appendonly yes
 
   mysql_master_01:
@@ -34,7 +34,7 @@ services:
       - "3306:3306"
     container_name: mysql_master_01
     volumes:
-      - "/project/vic0_blog/mysql/master-01/datadir:/var/lib/mysql"
+      - "./mysql/master-01/datadir:/var/lib/mysql"
     environment:
       MYSQL_ROOT_PASSWORD: "Password@1"
 

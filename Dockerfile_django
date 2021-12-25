@@ -1,5 +1,4 @@
 FROM python:3.8
-MAINTAINER Victor<896370742@qq.com>
 
 WORKDIR /usr/src/app
 COPY requirements.txt ./
