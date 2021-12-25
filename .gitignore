@@ -7,3 +7,5 @@ cnblog/__init__.py
 static/blog/U_P
 blog/__pycache__
 blog/migrations
+mysql
+redis
