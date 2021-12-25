@@ -1,3 +1,5 @@
 beautifulsoup4==4.10.0
 Django==3.2.5
 Pillow==8.4.0
+pymysql==1.0.2
+django-redis==5.1.0

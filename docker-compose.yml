@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  django01:
+    build:
+      context: .
+      dockerfile: Dockerfile_django
+      network: django
+    image: victor/django:1.0
+    container_name: django01
+    working_dir: /usr/src/app
+    depends_on:
+        - redis_master_01
+        - mysql_master_01
+    ports:
+      - "80:80"
+    volumes:
+      - "/project/vic0_blog/django:/usr/src/app"
+
+  redis_master_01:
+    image: "redis"
+    ports:
+      - "6379:6379"
+    container_name: redis_master_01
+    volumes:
+      - "/project/vic0_blog/redis/redis.conf:/usr/local/etc/redis/redis.conf"
+      - /project/vic0_blog/redis/datadir:/data
+      - /project/vic0_blog/redis/logs:/logs
+    command: redis-server --port 6379 --requirepass Password@1  --appendonly yes
+
+  mysql_master_01:
+    image: "mysql:5.7"
+    ports:
+      - "3306:3306"
+    container_name: mysql_master_01
+    volumes:
+      - "/project/vic0_blog/mysql/master-01/datadir:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "Password@1"
+
